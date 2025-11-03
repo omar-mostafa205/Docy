@@ -3,6 +3,8 @@ import { authConfig } from "@/server/auth/config";
 import DashboardBody from "@/components/DashboardBody";
 import { redirect } from "next/navigation";
 import React from "react";
+import{ Suspense } from "react";
+
 
 const DashboardPage = async () => {
   const session = await getServerSession(authConfig);
@@ -13,7 +15,9 @@ const DashboardPage = async () => {
 
   return (
     <div>
+      <Suspense>
       <DashboardBody userId={session.user?.id ?? ""} />
+        </Suspense>
     </div>
   );
 };
