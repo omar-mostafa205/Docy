@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import {  ArrowUp, FileDown } from 'lucide-react';
 import RenderDocument from '@/components/RenderDocument';
 ;
@@ -93,7 +93,9 @@ const DisplayDoc = ({
             </div>
           </div>
           <div className="p-8" ref={printRef}>
+            <Suspense fallback={<div>Loading...</div>}>
             <RenderDocument documentetaion={selectedDoc.body} />
+            </Suspense>
           </div>
         </div>
       </div>
