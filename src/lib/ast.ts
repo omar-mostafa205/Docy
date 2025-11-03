@@ -122,7 +122,7 @@ Promise<{
         types: []
       };
     }
-    const MAX_FILE_SIZE = 30000; // 50KB limit
+    const MAX_FILE_SIZE = 30000;
     if (contentStr.length > MAX_FILE_SIZE) {
       console.warn(`File too large to parse: ${relativePath} (${contentStr.length} chars, limit: ${MAX_FILE_SIZE})`);
       return {
