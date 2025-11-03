@@ -85,87 +85,166 @@ Promise<{
   types: TypeAliasInfo[];
 } | null>
 {
-  const language = languageMap.get(type);
-  if (!language) {
-    return null;
-  }
-  const contentStr = Buffer.isBuffer(content) ? content.toString('utf-8') : content;
-  const parser = new Parser();
-  parser.setLanguage(language);
-  
-  const tree = parser.parse(contentStr);
-  
-  const functions: FunctionInfo[] = [];
-  const imports: ImportInfo[] = [];
-  const exports: ExportInfo[] = [];
-  const classes: ClassInfo[] = [];
-  const variables: VariableInfo[] = [];
-  const interfaces: InterfaceInfo[] = [];
-  const types: TypeAliasInfo[] = [];
-
-  function walkTree(node: any, filePath: string) {
-    if (!node) return;
-
-    switch(node.type) {
-      case "import_statement":
-      case "import_declaration":
-        const importInfo = extractImportInfo(node);
-        if (importInfo) imports.push(importInfo);
-        break;
-      
-      case "export_statement":
-      case "export_declaration":
-        const exportInfo = extractExportInfo(node);
-        if (exportInfo) exports.push(exportInfo);
-        break;
-      
-      case "function_declaration":
-      case "function_definition":
-        const funcInfo = extractFunctionInfo(node, filePath);
-        if (funcInfo) functions.push(funcInfo);
-        break;
-      
-      case "class_declaration":
-      case "class_definition":
-        const classInfo = extractClassInfo(node, filePath);
-        if (classInfo) classes.push(classInfo);
-        break;
-      
-      case "variable_declaration":
-      case "lexical_declaration":
-        const varInfo = extractVariableInfo(node, filePath);
-        if (varInfo) variables.push(varInfo);
-        break;
-      
-      case "interface_declaration":
-        const interfaceInfo = extractInterfaceInfo(node, filePath);
-        if (interfaceInfo) interfaces.push(interfaceInfo);
-        break;
-      
-      case "type_alias_declaration":
-        const typeInfo = extractTypeAliasInfo(node, filePath);
-        if (typeInfo) types.push(typeInfo);
-        break;
+  try {
+    const language = languageMap.get(type);
+    if (!language) {
+      console.log(`No language parser found for type: ${type}`);
+      return null;
     }
 
-    if (node.children) {
-      for (const child of node.children) {
-        walkTree(child, filePath);
+    // Convert content to string with validation
+    let contentStr: string;
+    if (Buffer.isBuffer(content)) {
+      contentStr = content.toString('utf-8');
+    } else if (typeof content === 'string') {
+      contentStr = content;
+    } else {
+      console.error(`Invalid content type for ${relativePath}:`, typeof content);
+      throw new Error(`Invalid content type: ${typeof content}`);
+    }
+
+    // Validate content string
+    if (contentStr === null || contentStr === undefined) {
+      console.error(`Content is null/undefined for ${relativePath}`);
+      throw new Error('Content is null or undefined');
+    }
+
+    // Check if content is empty or too large
+    if (contentStr.length === 0) {
+      console.warn(`Empty content for ${relativePath}`);
+      return {
+        functions: [],
+        imports: [],
+        exports: [],
+        classes: [],
+        variables: [],
+        interfaces: [],
+        types: []
+      };
+    }
+    const MAX_FILE_SIZE = 30000; // 50KB limit
+    if (contentStr.length > MAX_FILE_SIZE) {
+      console.warn(`File too large to parse: ${relativePath} (${contentStr.length} chars, limit: ${MAX_FILE_SIZE})`);
+      return {
+        functions: [],
+        imports: [],
+        exports: [],
+        classes: [],
+        variables: [],
+        interfaces: [],
+        types: []
+      };
+    }
+
+    // Log parsing attempt
+    console.log(`Parsing ${relativePath} (${contentStr.length} chars, type: ${type})`);
+
+    const parser = new Parser();
+    
+    // Validate language object before setting
+    if (!language || typeof language !== 'object') {
+      console.error(`Invalid language object for ${type}:`, language);
+      throw new Error(`Invalid language object for ${type}`);
+    }
+
+    parser.setLanguage(language);
+    
+    // Parse with error handling
+    let tree;
+    try {
+      tree = parser.parse(contentStr);
+    } catch (parseError) {
+      console.error(`Parser.parse() error for ${relativePath}:`, parseError);
+      console.error(`Content preview (first 200 chars):`, contentStr.substring(0, 200));
+      console.error(`Content type:`, typeof contentStr);
+      console.error(`Content length:`, contentStr.length);
+      console.error(`Language:`, type);
+      throw parseError;
+    }
+
+    if (!tree || !tree.rootNode) {
+      console.error(`Parser returned invalid tree for ${relativePath}`);
+      throw new Error('Parser returned invalid tree');
+    }
+    
+    const functions: FunctionInfo[] = [];
+    const imports: ImportInfo[] = [];
+    const exports: ExportInfo[] = [];
+    const classes: ClassInfo[] = [];
+    const variables: VariableInfo[] = [];
+    const interfaces: InterfaceInfo[] = [];
+    const types: TypeAliasInfo[] = [];
+
+    function walkTree(node: any, filePath: string) {
+      if (!node) return;
+
+      switch(node.type) {
+        case "import_statement":
+        case "import_declaration":
+          const importInfo = extractImportInfo(node);
+          if (importInfo) imports.push(importInfo);
+          break;
+        
+        case "export_statement":
+        case "export_declaration":
+          const exportInfo = extractExportInfo(node);
+          if (exportInfo) exports.push(exportInfo);
+          break;
+        
+        case "function_declaration":
+        case "function_definition":
+          const funcInfo = extractFunctionInfo(node, filePath);
+          if (funcInfo) functions.push(funcInfo);
+          break;
+        
+        case "class_declaration":
+        case "class_definition":
+          const classInfo = extractClassInfo(node, filePath);
+          if (classInfo) classes.push(classInfo);
+          break;
+        
+        case "variable_declaration":
+        case "lexical_declaration":
+          const varInfo = extractVariableInfo(node, filePath);
+          if (varInfo) variables.push(varInfo);
+          break;
+        
+        case "interface_declaration":
+          const interfaceInfo = extractInterfaceInfo(node, filePath);
+          if (interfaceInfo) interfaces.push(interfaceInfo);
+          break;
+        
+        case "type_alias_declaration":
+          const typeInfo = extractTypeAliasInfo(node, filePath);
+          if (typeInfo) types.push(typeInfo);
+          break;
+      }
+
+      if (node.children) {
+        for (const child of node.children) {
+          walkTree(child, filePath);
+        }
       }
     }
+
+    walkTree(tree.rootNode, relativePath);
+
+    console.log(`Successfully parsed ${relativePath}: ${functions.length} functions, ${classes.length} classes, ${imports.length} imports`);
+
+    return {
+      functions,
+      imports,
+      exports,
+      classes,
+      variables,
+      interfaces,
+      types
+    };
+  } catch (error) {
+    console.error(`Error in parseFile for ${relativePath}:`, error);
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+    throw error;
   }
-
-  walkTree(tree.rootNode, relativePath);
-
-  return {
-    functions,
-    imports,
-    exports,
-    classes,
-    variables,
-    interfaces,
-    types
-  };
 }
 
 function extractFunctionInfo(node: any, filePath: string): FunctionInfo | null {
