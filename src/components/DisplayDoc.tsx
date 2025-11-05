@@ -82,17 +82,7 @@ const DisplayDoc = ({
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                {getDocTitle(selectedDoc.type)}
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                Last updated: {new Date(selectedDoc.updatedAt).toLocaleString()}
-              </p>
-            </div>
-          </div>
-          <div className="p-8" ref={printRef}>
+          <div className="p-1" ref={printRef}>
             <Suspense fallback={<div>Loading...</div>}>
             <RenderDocument documentetaion={selectedDoc.body} />
             </Suspense>
