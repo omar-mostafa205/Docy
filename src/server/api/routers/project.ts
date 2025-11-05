@@ -160,25 +160,20 @@ export const projectRouter = createTRPCRouter({
         return doc;
     }),
 
-    getRepos: publicProcedure.input(z.object({
-        userId: z.string()
-    })).query(async ({ctx, input}) => {
-        const cachedRepos = await unstable_cache(
-            async () => {
-                return ctx.db.projectData.findMany({
-                    where: {
-                        userId: input.userId
-                    }
-                });
-            },
-            [`repos-${input.userId}`],
-            {
-                revalidate: 600,
-                tags: [`repos-${input.userId}`]
-            }
-        )();
-        return cachedRepos;
+    getRepos: publicProcedure
+    .input(z.object({
+      userId: z.string(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const repos = await ctx.db.projectData.findMany({
+        where: {
+          userId: input.userId,
+        },
+      });
+  
+      return repos;
     }),
+  
 
     getReopId : publicProcedure.input(z.object({
         id : z.string()

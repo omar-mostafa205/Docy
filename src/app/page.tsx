@@ -16,7 +16,7 @@ const Page = () => {
       <main className="">
       <section
   id="home"
-  className="flex items-center justify-center w-full min-h-screen sm:mt-20 lg:mt-0"
+  className="flex items-center justify-center w-full min-h-screen mt-14 md:mt-30 lg:mt-0"
 >          <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between px-6 md:px-8 lg:px-12 xl:px-16 gap-8 lg:gap-16">
 
             <div className="w-full lg:w-[45%] xl:w-[40%] text-center lg:text-left">
@@ -29,7 +29,7 @@ const Page = () => {
               <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-[500px] mx-auto lg:mx-0">
               Your AI documentation engineer. Upload your code and instantly turn it into clear, structured, developer-ready docs.              </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-start items-center">
               <div className="relative w-fit rounded-full">
                 <Button className="group relative z-10 text-white bg-black cursor-pointer hover:bg-gray-900 w-fit py-8 px-10 text-xl rounded-md shadow-[0_12px_30px_rgba(0,0,0,0.4)] transition-colors duration-200"> 
                   <Link href={"/upload-repo"}> Generate Docs  </Link>

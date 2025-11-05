@@ -1,10 +1,15 @@
 import React from 'react';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
-import { signIn } from '@/server/auth';
+import { auth, signIn } from '@/server/auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-const SignUpPage = () => {
+const SignUpPage = async() => {
+  const session = await auth()
+  if(session?.user){
+    redirect('/dashboard')
+  }
   return (
     <div className='min-h-screen bg-[#f2f1ed] flex relative mx-auto'>
       <Link href='/' className='absolute left-22 gap-2 my-16'>

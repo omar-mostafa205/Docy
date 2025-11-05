@@ -21,12 +21,9 @@ import C from 'tree-sitter-c';
 import CPP from 'tree-sitter-cpp';
 import CSharp from 'tree-sitter-c-sharp';
 import CSS from 'tree-sitter-css';
-// import SQL from 'tree-sitter-sql';
 import Bash from 'tree-sitter-bash';
 import YAML from 'tree-sitter-yaml';
 import type { 
-  Ast, 
-  ParsedFile,
   SourceLocation,
   FunctionInfo,
   Parameter,
@@ -67,7 +64,6 @@ const languageMap = new Map([
   ['.bash', Bash],
   ['.yml', YAML],
   ['.yaml', YAML],
-  // ['.sql', SQL],
 ]);
 
 export async function parseFile(
@@ -88,30 +84,23 @@ Promise<{
   try {
     const language = languageMap.get(type);
     if (!language) {
-      console.log(`No language parser found for type: ${type}`);
       return null;
     }
 
-    // Convert content to string with validation
     let contentStr: string;
     if (Buffer.isBuffer(content)) {
       contentStr = content.toString('utf-8');
     } else if (typeof content === 'string') {
       contentStr = content;
     } else {
-      console.error(`Invalid content type for ${relativePath}:`, typeof content);
       throw new Error(`Invalid content type: ${typeof content}`);
     }
 
-    // Validate content string
     if (contentStr === null || contentStr === undefined) {
-      console.error(`Content is null/undefined for ${relativePath}`);
       throw new Error('Content is null or undefined');
     }
 
-    // Check if content is empty or too large
     if (contentStr.length === 0) {
-      console.warn(`Empty content for ${relativePath}`);
       return {
         functions: [],
         imports: [],
@@ -124,7 +113,6 @@ Promise<{
     }
     const MAX_FILE_SIZE = 30000;
     if (contentStr.length > MAX_FILE_SIZE) {
-      console.warn(`File too large to parse: ${relativePath} (${contentStr.length} chars, limit: ${MAX_FILE_SIZE})`);
       return {
         functions: [],
         imports: [],
@@ -136,34 +124,22 @@ Promise<{
       };
     }
 
-    // Log parsing attempt
-    console.log(`Parsing ${relativePath} (${contentStr.length} chars, type: ${type})`);
-
     const parser = new Parser();
     
-    // Validate language object before setting
     if (!language || typeof language !== 'object') {
-      console.error(`Invalid language object for ${type}:`, language);
       throw new Error(`Invalid language object for ${type}`);
     }
 
     parser.setLanguage(language);
     
-    // Parse with error handling
     let tree;
     try {
       tree = parser.parse(contentStr);
     } catch (parseError) {
-      console.error(`Parser.parse() error for ${relativePath}:`, parseError);
-      console.error(`Content preview (first 200 chars):`, contentStr.substring(0, 200));
-      console.error(`Content type:`, typeof contentStr);
-      console.error(`Content length:`, contentStr.length);
-      console.error(`Language:`, type);
       throw parseError;
     }
 
     if (!tree || !tree.rootNode) {
-      console.error(`Parser returned invalid tree for ${relativePath}`);
       throw new Error('Parser returned invalid tree');
     }
     
@@ -229,8 +205,6 @@ Promise<{
 
     walkTree(tree.rootNode, relativePath);
 
-    console.log(`Successfully parsed ${relativePath}: ${functions.length} functions, ${classes.length} classes, ${imports.length} imports`);
-
     return {
       functions,
       imports,
@@ -241,8 +215,6 @@ Promise<{
       types
     };
   } catch (error) {
-    console.error(`Error in parseFile for ${relativePath}:`, error);
-    console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
     throw error;
   }
 }
@@ -307,7 +279,7 @@ function extractFunctionInfo(node: any, filePath: string): FunctionInfo | null {
     isExported,
     isGenerator,
     location,
-    comments: [] 
+    comments: []
   };
 }
 

@@ -1,9 +1,15 @@
+import { auth } from '@/server/auth';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import React from 'react';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
 
-const SignInPage = () => {
+const SignInPage = async() => {
+  const session = await auth()
+  if(session?.user){
+    redirect('/dashboard')
+  }
   const handleGitHubSignIn = async () => {
     "use server";
     const { signIn } = await import('@/server/auth');
