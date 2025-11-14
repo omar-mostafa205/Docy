@@ -1,7 +1,7 @@
 # Docy
 
 <div align="center">
-  <img src="public/docyh.png" alt="Docy Logo" width="120" />
+  <img src="public/docyh.png" alt="Docy Logo" width="420" />
   
   ### Write Docs Without Writing Them
   
