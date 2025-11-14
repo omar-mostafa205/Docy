@@ -1,7 +1,7 @@
 # Docy
 
 <div align="center">
-  <img src="public/docyh.png" alt="Docy Logo" width="420" />
+  <img src="public/docyh.png" alt="Docy Logo" width="1000"  hieght="1000"/>
   
   ### Write Docs Without Writing Them
   
@@ -275,7 +275,7 @@ pnpm format           # Format with Prettier
 
 ---
 
-## 🚀 Deployment
+##  Deployment
 
 ### Vercel (Recommended)
 
@@ -313,7 +313,7 @@ Ensure all required environment variables are set in your deployment platform:
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
@@ -327,7 +327,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ---
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -342,7 +342,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
+##  Support
 
 - Email: support@docy.dev
 - Issues: [GitHub Issues](https://github.com/yourusername/docy/issues)
