@@ -1,7 +1,7 @@
 # Docy
 
 <div align="center">
-  <img src="public/docyh.png" alt="Docy Logo" width="1000"  hieght="1000"/>
+  <img src="public/docyh.png" alt="Docy Logo" width="1500"  hieght="1500"/>
   
   ### Write Docs Without Writing Them
   
@@ -49,7 +49,7 @@
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/docy.git
+   git clone https://github.com/omar-mostafa205/Docy.git
    cd docy
    ```
 
