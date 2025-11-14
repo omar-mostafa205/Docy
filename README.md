@@ -12,7 +12,7 @@
   [![Next.js](https://img.shields.io/badge/Next.js-15.0+-black.svg)](https://nextjs.org/)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Demo](https://docy-demo.vercel.app) · [Documentation](https://docs.docy.dev) · [Report Bug](https://github.com/yourusername/docy/issues) · [Request Feature](https://github.com/yourusername/docy/issues)
+[Demo](https://docy-demo.vercel.app) · [Documentation](https://docs.docy.dev) · [Report Bug](https://github.com/omar-mostafa205/Docy/issues) · [Request Feature](https://github.com/omar-mostafa205/Docy/issues)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 **Docy** is an intelligent documentation platform that transforms your codebase into comprehensive, structured documentation using advanced AI and AST (Abstract Syntax Tree) analysis. Upload your repository, and within seconds, get professional-grade documentation that your team can actually use.
 
-### ✨ Key Features
+###  Key Features
 
 - **AI-Powered Generation** - Leverages GPT-4/Claude to understand your code and generate meaningful documentation
 - **AST Analysis** - Deep code structure analysis for accurate technical insights
@@ -151,7 +151,7 @@ Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the b
 
 ---
 
-## 💡 How It Works
+##  How It Works
 
 1. **Upload Your Repository**
    - Provide your GitHub/GitLab repository URL and access token
@@ -186,7 +186,7 @@ Perfect for developers joining your project
 - Code patterns and conventions
 - Setup and installation guides
 
-### 🌐API Documentation
+### API Documentation
 
 Ideal for backend teams and API consumers
 
@@ -336,7 +336,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [T3 Stack](https://create.t3.gg/)
-- Powered by [OpenAI GPT-4](https://openai.com)
+- Powered by [Gemeni-Flash](https://gemini.com)
 - UI components from [shadcn/ui](https://ui.shadcn.com)
 - Icons from [Lucide](https://lucide.dev)
 
@@ -345,7 +345,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ##  Support
 
 - Email: support@docy.dev
-- Issues: [GitHub Issues](https://github.com/yourusername/docy/issues)
+- Issues: [GitHub Issues](https://github.com/omar-mostafa205/Docy/issues)
 - Docs: [Documentation](https://docs.docy.dev)
 
 ---
