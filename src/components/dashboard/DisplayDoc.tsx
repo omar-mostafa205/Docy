@@ -1,7 +1,7 @@
 'use client';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import {  ArrowUp, FileDown } from 'lucide-react';
-import RenderDocument from '@/components/RenderDocument';
+import RenderDocument from '@/components/dashboard/RenderDocument';
 ;
 
 

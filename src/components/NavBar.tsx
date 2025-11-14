@@ -5,10 +5,9 @@ import { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import MobileNav from "./MobileNav";
 import { useSession } from "next-auth/react";
-
+import {navItems} from '../lib/constants'
 export default function NavBar() {
-    const { data: session } = useSession()
-
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -60,56 +59,32 @@ export default function NavBar() {
         </Link>
 
         <ul className="hidden lg:flex flex-row items-center gap-8">
-          <li>
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200 cursor-pointer"
-            >
-              Home
-            </button>
-          </li>
-          <li>
-            <button 
-              onClick={() => scrollToSection('overview')}
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200 cursor-pointer"
-            >
-              overview
-            </button>
-          </li>
-          <li>
-            <button 
-              onClick={() => scrollToSection('features')}
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200 cursor-pointer"
-            >
-              Features
-            </button>
-          </li>
-
-          <li>
-            <button 
-              onClick={() => scrollToSection('how-it-works')}
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200 cursor-pointer"
-            >
-              How It Works
-            </button>
-          </li>
-   
+          {navItems.map((item) => (
+            <li key={item.id}>
+              <button 
+                onClick={() => scrollToSection(item.id)}
+                className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200 cursor-pointer"
+              >
+                {item.label}
+              </button>
+            </li>
+          ))}
         </ul>
 
-{       !session?.user ?
-        <div className="relative rounded-full hidden lg:block">
-        <Link href="/sign-in" className="relative z-10 bg-black text-white rounded-full px-6 py-2 block">
-          Get Started
-        </Link>
-      </div>
-      :(       <div className="relative rounded-full hidden lg:block cursor-pointer">
-        <Link href="/dashboard" className="relative z-10 bg-black cursor-pointer text-white rounded-full px-6 py-2  flex flex-row gap-2 justify-center items-center">
-          Dashboard
-          <ArrowUpRight className="w-5 h-5" />
-        </Link>
-
-      </div> )
-}  
+        {!session?.user ? (
+          <div className="relative rounded-full hidden lg:block">
+            <Link href="/sign-in" className="relative z-10 bg-black text-white rounded-full px-6 py-2 block">
+              Get Started
+            </Link>
+          </div>
+        ) : (
+          <div className="relative rounded-full hidden lg:block cursor-pointer">
+            <Link href="/dashboard" className="relative z-10 bg-black cursor-pointer text-white rounded-full px-6 py-2 flex flex-row gap-2 justify-center items-center">
+              Dashboard
+              <ArrowUpRight className="w-5 h-5" />
+            </Link>
+          </div>
+        )}
 
         <button
           className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
@@ -125,7 +100,7 @@ export default function NavBar() {
       </div>
 
       {isMenuOpen && (
-          <MobileNav  scrollToSection ={scrollToSection} closeMenu ={closeMenu}/> 
+        <MobileNav scrollToSection={scrollToSection} closeMenu={closeMenu} /> 
       )}
     </nav>
   );

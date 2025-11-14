@@ -20,7 +20,7 @@ const SignUpPage = async() => {
         <div className='max-w-xl'>
           <h1 className='text-4xl font-bold mb-8 leading-tight md:text-5xl mx-10 md:mx-5'>
           Automated Code Documentation Instantly
-                    </h1>
+                  </h1>
           
           <p className='text-sm text-gray-600 md:text-xl mx-10 md:mx-5'>
           Upload your project — get documentation that’s accurate, readable, and always in sync.

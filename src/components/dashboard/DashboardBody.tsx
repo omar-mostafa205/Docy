@@ -35,7 +35,7 @@ export default function DashboardBody() {
   return (
     <>
       {isLoading ? (
-        <div className="min-h-screen bg-white p-8">
+        <div className="min-h-screen bg-[#faf9f5] p-8">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-semibold mb-8">Your Repositories</h1>
             <div className="grid grid-cols-3 gap-6">
@@ -50,7 +50,7 @@ export default function DashboardBody() {
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-white p-8">
+        <div className="min-h-screen bg-[#faf9f5] p-8">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-semibold mb-8">Your Repositories</h1>
             

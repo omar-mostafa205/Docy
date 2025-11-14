@@ -8,9 +8,9 @@ export default auth((req) => {
     const isProtectedRoutes = [req.nextUrl.pathname.startsWith('/dashboard') ,  req.nextUrl.pathname.startsWith('/docs') , req.nextUrl.pathname.startsWith('/upload-repo')]
     const isProtectedRoute = isProtectedRoutes.some(Boolean) 
 
-    if (isProtectedRoute && !isLoggedIn) {
-        return NextResponse.redirect(new URL('/sign-in', req.url))
-    }
+    // if (isProtectedRoute && !isLoggedIn) {
+    //     return NextResponse.redirect(new URL('/sign-in', req.url))
+    // }
 
     return NextResponse.next();
 }) 

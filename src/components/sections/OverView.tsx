@@ -4,7 +4,6 @@ export default function Overview() {
   return (
     <div className="min-h-screen bg-[#261a17] flex items-center justify-center p-10">
       <div className="max-w-6xl w-full">
-        {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-block mb-4">
             <span className="text-sm font-medium text-[#ff4d1a] border border-[#ff4d1a] rounded-full px-4 py-1 shadow-sm">

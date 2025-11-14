@@ -10,8 +10,10 @@ import {
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { auth } from '@/server/auth'
 
-const Page = () => {
+const Page = async() => {
+  const session = await auth()
   return (
     <div className='min-h-screen bg-[#faf9f5]  flex justify-center items-center p-6 relative'>
       <Link href='/' className='top-5 absolute left-10  flex-row items-center justify-center lg:flex hidden'>
@@ -26,15 +28,15 @@ const Page = () => {
                   Connect with Repository URL
                 </CardTitle>
                 <Link href='/' className='text-sm text-gray-600 flex items-center gap-2'>
-        <Image src='/new.png' alt='github-logo' width={32} height={32} /> 
-        </Link> 
+                <Image src='/new.png' alt='github-logo' width={32} height={32} /> 
+                  </Link> 
                 </div>
                 <CardDescription className='text-sm text-gray-600'>
                   Provide your GitHub repository URL and access token to generate documentation
                 </CardDescription>
               </CardHeader>
               <CardContent className='pt-6'>
-                <RepoForm />
+                <RepoForm userId = {session?.user.id} />
               </CardContent>
             </Card>
 

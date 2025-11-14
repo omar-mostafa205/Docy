@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client"
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -63,25 +62,21 @@ const RenderDocument = ({ documentetaion }: RenderDocumentProps) => {
               .replace(/\r/g, '\n')
               .trim();
   
-            // Fix old arrow syntax: A -- "label" --> B  to  A -->|label| B
-            cleanedCode = cleanedCode.replace(
+              cleanedCode = cleanedCode.replace(
               /(\w+)\s*--\s*"([^"]+)"\s*-->\s*(\w+)/g,
               '$1 -->|$2| $3'
             );
             
-            // Fix incomplete arrow syntax: A -- "label"  to  A -->|label|
             cleanedCode = cleanedCode.replace(
               /(\w+)\s*--\s*"([^"]+)"\s*/g,
               '$1 -->|$2| '
             );
   
-            // Fix --|> to -->
             if (cleanedCode.includes('--|>')) {
               cleanedCode = cleanedCode.replace(/--\|>/g, '-->');
               console.warn('Auto-fixed Mermaid syntax: replaced --|> with -->');
             }
   
-            // Remove escaped quotes
             cleanedCode = cleanedCode.replace(/\\"/g, '"');
   
             await mermaid.parse(cleanedCode);

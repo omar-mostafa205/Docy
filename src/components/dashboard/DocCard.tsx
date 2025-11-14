@@ -1,7 +1,6 @@
 "use client"
-import { Download, Eye, FileText } from 'lucide-react'
+import { Eye, FileText } from 'lucide-react'
 import React from 'react'
-import { FaFileDownload } from 'react-icons/fa'
 import { FaFileExport } from 'react-icons/fa';
 
 type Doc = {
@@ -27,11 +26,9 @@ interface DocCardProps {
 const DocCard = ({
   doc,
   handleView, 
-  getTypeLabel, 
   getDocTitle, 
   getDocDescription, 
   handleExportMarkdown, 
-  handleDownloadPDF
 }: DocCardProps) => {
   return (
     <div className="space-y-3">

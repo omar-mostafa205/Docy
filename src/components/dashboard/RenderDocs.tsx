@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { FileText , Plus, Clock } from 'lucide-react';
 import { api } from '@/trpc/react';
 import { useRouter, useParams } from 'next/navigation';
-import DocCard from '@/components/DocCard';
-import DisplayDoc from '@/components/DisplayDoc';
+import DocCard from '@/components/dashboard/DocCard';
+import DisplayDoc from '@/components/dashboard/DisplayDoc';
 
 type Doc = {
   id: string
@@ -83,7 +83,6 @@ const RenderDocs = () => {
   const handleExportMarkdown = (doc: Doc) => {
     let body = typeof doc.body === 'string' ? doc.body : JSON.stringify(doc.body);
     
-    // Sanitize the documentation
     body = sanitizeDocumentation(body);
     
     const blob = new Blob([body], { type: 'text/markdown' });

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { BentoCard, BentoGrid } from "@/components/bento-grid";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { Code2, FileText, Sparkles } from "lucide-react";
-import { Animated } from "./animated";
+import { Animated } from "../ui/animated";
 
 
 const features = [

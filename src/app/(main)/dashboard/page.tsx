@@ -1,13 +1,13 @@
 import getServerSession from "next-auth";
 import { authConfig } from "@/server/auth/config";
-import DashboardBody from "@/components/DashboardBody";
+import DashboardBody from "@/components/dashboard/DashboardBody";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 
 export const dynamic = 'force-dynamic';
 
-const DashboardPage = async () => {
-  const session = await getServerSession(authConfig);
+const DashboardPage = () => {
+  const session =  getServerSession(authConfig);
 
   if (!session) {
     redirect("/sign-in");

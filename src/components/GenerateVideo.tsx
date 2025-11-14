@@ -17,7 +17,6 @@ const GenerateVideo = () => {
   </video>
 </div>
 
-
 </div>
 
   )

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ChevronsUpDown, Github, LogOut, Plus } from 'lucide-react';
@@ -30,13 +29,11 @@ export default function DashboardNav() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-    const pathSegments = pathname?.split('/').filter(Boolean);
+  const pathSegments = pathname?.split('/').filter(Boolean);
   const isDocsPage = pathSegments?.[0] === 'dashboard' && pathSegments?.[1] === 'docs';
   const repoIdFromPath = isDocsPage ? pathSegments?.[2] : null;
   const repoId = searchParams.get('repoId') || repoIdFromPath;
-
   const [activeRepo, setActiveRepo] = useState<Repository | null>(null);
-
   const { data: repos } = api.project.getRepos.useQuery({
     userId: session?.user?.id || '',
   }, {
@@ -76,7 +73,6 @@ export default function DashboardNav() {
           <Image src="/new.png" alt="Logo" width={32} height={32} />
           </Link>
         </div>
-
         <span className="text-gray-400">/</span>
 
         <button 
@@ -119,9 +115,9 @@ export default function DashboardNav() {
                         <p className="text-sm font-medium text-gray-900 truncate">
                           { repo.repoisteryUrl || 'Repository'}
                         </p>
-                        {repo.githubUrl && (
+                        {repo.repoisteryUrl && (
                           <p className="text-xs text-gray-500 truncate">
-                            {repo.githubUrl}
+                            {repo.repoisteryUrl }
                           </p>
                         )}
                       </div>
