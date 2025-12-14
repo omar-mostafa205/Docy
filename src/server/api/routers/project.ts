@@ -57,7 +57,7 @@ export const projectRouter = createTRPCRouter({
 
             const totalDocs = userProjects.reduce((acc, project) => acc + project.documentaion.length, 0);
 
-            if (totalDocs >= 3) {
+            if (totalDocs >= 4) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'You have reached your free limit'

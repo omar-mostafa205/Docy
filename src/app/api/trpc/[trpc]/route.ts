@@ -14,7 +14,7 @@ const createContext = async (req: NextRequest) => {
     headers: req.headers,
   });
 };
-export const runtime = 'nodejs'; 
+export const runtime = "nodejs";
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
     endpoint: "/api/trpc",
@@ -25,7 +25,7 @@ const handler = (req: NextRequest) =>
       env.NODE_ENV === "development"
         ? ({ path, error }) => {
             console.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+              ` tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
             );
           }
         : undefined,
