@@ -12,7 +12,7 @@
   [![Next.js](https://img.shields.io/badge/Next.js-15.0+-black.svg)](https://nextjs.org/)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Demo](https://docy-demo.vercel.app) · [Documentation](https://docs.docy.dev) · [Report Bug](https://github.com/omar-mostafa205/Docy/issues) · [Request Feature](https://github.com/omar-mostafa205/Docy/issues)
+[Demo](https://docy-liard.vercel.app/) · [Documentation](https://docs.docy.dev) · [Report Bug]([https://docy-liard.vercel.app/s](https://docy-liard.vercel.app/)) · [Request Feature](https://github.com/omar-mostafa205/Docy/issues)
 
 </div>
 
@@ -35,7 +35,7 @@
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -176,7 +176,7 @@ Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the b
 
 ## Documentation Types
 
-### 🔧 Technical Documentation
+### Technical Documentation
 
 Perfect for developers joining your project
 
