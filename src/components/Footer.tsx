@@ -25,10 +25,30 @@ export default function FooterSection() {
                     <Socials />
                 <span className="text-white block text-center text-sm mb-8"> © {new Date().getFullYear()} Docy, All rights reserved</span>
             </div>
-    
-            <div className="absolute bottom-0 left-20 lg:left-105 md:left-60 mt-100 w-full overflow-hidden pointer-events-none">
-                <span className="block text-[200px] md:text-[200px] lg:text-[280px] font-bold tracking-tight opacity-[0.1] leading-none text-[#fa5028] -mb-1 md:-mb-10 lg:-mb-16 ">Docy</span>
-            </div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full overflow-hidden pointer-events-none">
+  <span
+    className="
+      block
+      text-center
+      font-bold
+      tracking-tight
+      leading-none
+      text-[#fa5028]
+      opacity-[0.1]
+
+      text-[96px]          /* mobile */
+      sm:text-[170px]      /* small screens */
+      md:text-[200px]      /* tablets */
+      lg:text-[280px]      /* desktop */
+
+      -mb-3
+      md:-mb-6
+      lg:-mb-8
+    "
+  >
+    Docy
+  </span>
+</div>
         </footer>
         </section>
     )

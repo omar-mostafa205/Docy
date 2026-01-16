@@ -1,27 +1,105 @@
-import React from 'react';
+"use client"
+import React, { useEffect, useRef } from 'react';
 import { SiGitlab } from 'react-icons/si';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function ThreeSteps() {
+  const sectionRef = useRef(null);
+  const badgeRef = useRef(null);
+  const headingRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const tl = gsap.timeline({
+      defaults: { ease: 'power3.out' },
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 80%',
+        toggleActions: 'play none none none',
+      }
+    });
+
+    tl.fromTo(
+      badgeRef.current,
+      { opacity: 0, y: -30, scale: 0.8 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6 }
+    )
+    // Heading with motion blur effect
+    .fromTo(
+      headingRef.current,
+      { 
+        opacity: 0, 
+        y: 80, 
+        clipPath: 'inset(100% 0 0 0)',
+        filter: 'blur(8px)'
+      },
+      { 
+        opacity: 1, 
+        y: 0, 
+        clipPath: 'inset(0% 0 0 0)',
+        filter: 'blur(0px)',
+        duration: 0.9,
+        ease: 'power2.out'
+      },
+      '-=0.2'
+    )
+    .fromTo(
+      descriptionRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.6'
+    )
+    // Cards staggered animation
+    .fromTo(
+      cardsRef.current,
+      { 
+        opacity: 0, 
+        y: 60,
+        filter: 'blur(6px)'
+      },
+      { 
+        opacity: 1, 
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power2.out'
+      },
+      '-=0.3'
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
   return (
-    <div className="min-h-[120vh] bg-white pt-12 pb-30 px-4">
+    <div ref={sectionRef} className="min-h-[120vh] bg-white pt-12 pb-30 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-25">
-        <div className="inline-block mb-4">
+          <div className="inline-block mb-4" ref={badgeRef}>
             <span className="text-sm font-medium text-gray-600 border border-[#ff4d1a] rounded-full px-4 py-1 shadow-sm mb-4">
               QUICK START
             </span>
           </div>
-            <h1 className='text-5xl font-semibold'> 
-                How to start in <span className='text-[#fa5028]'>3 steps ?</span>
-            </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">Upload your code and get instant documentation, repeat!!</p>
+          <h1 ref={headingRef} className="text-5xl font-semibold overflow-hidden"> 
+            How to start in <span className='text-[#fa5028]'>3 steps ?</span>
+          </h1>
+          <p ref={descriptionRef} className="text-lg text-gray-600 max-w-3xl mx-auto">Upload your code and get instant documentation, repeat!!</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-8">
     
-          <div className="rounded-3xl p-8 relative overflow-hidden" style={{ boxShadow: '0 10px 30px -5px rgba(255, 77, 26, 0.3), inset 0 -20px 40px -20px rgba(255, 77, 26, 0.15)' }}>
+          <div 
+            ref={el => { cardsRef.current[0] = el }}
+            className="rounded-3xl p-8 relative overflow-hidden shadow-lg shadow-gray-200/80 hover:shadow-xl hover:shadow-gray-300/80 transition-shadow duration-300"
+          >
             <div className="relative z-10">
-              <div className="w-20 h-20 flex items-center justify-center mb-6" style={{ boxShadow: '0 10px 30px -5px rgba(255, 77, 26, 0.3), inset 0 -20px 40px -20px rgba(255, 77, 26, 0.15)' }}>
+              <div className="w-20 h-20 flex items-center justify-center mb-6">
                 <svg width="92" height="92" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clipPath="url(#clip0_147_1518)">
                     <g clipPath="url(#clip1_147_1518)">
@@ -76,14 +154,17 @@ export default function ThreeSteps() {
             </p>
           </div>
 
-          <div className="rounded-3xl p-8 relative overflow-hidden" style={{ boxShadow: '0 10px 30px -5px rgba(255, 77, 26, 0.3), inset 0 -20px 40px -20px rgba(255, 77, 26, 0.15)' }}>
+          <div 
+            ref={el => { cardsRef.current[1] = el }}
+            className="rounded-3xl p-8 relative overflow-hidden shadow-lg shadow-gray-200/80 hover:shadow-xl hover:shadow-gray-300/80 transition-shadow duration-300"
+          >
             <div className="absolute top-8 right-8 flex items-start gap-4">
               <div className="w-17 h-17 bg-white rounded-2xl shadow-lg flex items-center justify-center transform -rotate-6">
                 <svg width="45" height="45" viewBox="0 0 98 96" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" fill="#fa5028"/>
                 </svg>
               </div>
-              <div className="w-21 h-21 bg-white rounded-md shadow-md shadow-[#ff8468] flex items-center justify-center transform rotate-6 -mt-4 -mr-7">
+              <div className="w-21 h-21 bg-white rounded-md shadow-md flex items-center justify-center transform rotate-6 -mt-4 -mr-7">
                         <SiGitlab className='w-10 h-10 text-[#fa5028] '/>
               </div>
             </div>
@@ -114,7 +195,10 @@ export default function ThreeSteps() {
             </p>
           </div>
 
-          <div className="rounded-3xl p-8 relative overflow-hidden" style={{ boxShadow: '0 10px 30px -5px rgba(255, 77, 26, 0.3), inset 0 -20px 40px -20px rgba(255, 77, 26, 0.15)' }}>
+          <div 
+            ref={el => { cardsRef.current[2] = el }}
+            className="rounded-3xl p-8 relative overflow-hidden shadow-lg shadow-gray-200/80 hover:shadow-xl hover:shadow-gray-300/80 transition-shadow duration-300"
+          >
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 mb-1">Documentation</h2>

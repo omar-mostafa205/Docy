@@ -1,8 +1,13 @@
+"use client"
+import React, { useEffect, useRef } from 'react';
 import Image from "next/image";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { Code2, FileText, Sparkles } from "lucide-react";
 import { Animated } from "../ui/animated";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   {
@@ -179,21 +184,59 @@ export function DocyBentoGrid() {
 }
 
 export default function DocyFeaturesGrid() {
+  const sectionRef = useRef(null);
+  const badgeRef = useRef(null);
+  const headingRef = useRef(null);
+  const descriptionRef = useRef(null);
+
+  useEffect(() => {
+    const tl = gsap.timeline({
+      defaults: { ease: 'power3.out' },
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 80%',
+        toggleActions: 'play none none none',
+      }
+    });
+
+    tl.fromTo(
+      badgeRef.current,
+      { opacity: 0, y: -30, scale: 0.8 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6 }
+    )
+    .fromTo(
+      headingRef.current,
+      { opacity: 0, y: 100, clipPath: 'inset(100% 0 0 0)' },
+      { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1, ease: 'power4.out' },
+      '-=0.3'
+    )
+    .fromTo(
+      descriptionRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.4'
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
   return (
-    <div className="min-h-[200vh] bg-white py-30 px-4">
+    <div ref={sectionRef} className="min-h-[200vh] bg-white py-30 px-4">
       <div className="max-w-7xl mx-auto">
       
         <div className="text-center mb-16">
-          <div className="inline-block mb-4">
+          <div ref={badgeRef} className="inline-block mb-4">
             <span className="text-sm font-medium text-gray-600 border border-[#ff4d1a] rounded-full px-4 py-1 shadow-sm">
               FEATURES
             </span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 ref={headingRef} className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 overflow-hidden">
             Transform code into <br />
             <span className="text-black">professional documentation</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p ref={descriptionRef} className="text-lg text-gray-600 max-w-3xl mx-auto">
             Docy helps you automatically generate comprehensive documentation from your codebase. 
             Upload your code and get instant technical docs, API references, and architecture overviews powered by AST analysis.
           </p>

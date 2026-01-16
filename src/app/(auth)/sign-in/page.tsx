@@ -1,32 +1,32 @@
-import { auth } from '@/server/auth';
+import { auth, signIn } from '@/server/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import React from 'react';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
 
+// Move server actions outside component
+async function handleGitHubSignIn() {
+  "use server";
+  await signIn("github", { callbackUrl: '/dashboard' });
+}
+
+async function handleGitLabSignIn() {
+  "use server";
+  await signIn("gitlab", { callbackUrl: '/dashboard' });
+}
+
+async function handleGoogleSignIn() {
+  "use server";
+  await signIn("google", { callbackUrl: '/dashboard' });
+}
+
 const SignInPage = async() => {
-  const session = await auth()
+  const session = await auth();
+  
   if(session?.user){
-    redirect('/dashboard')
+    redirect('/dashboard');
   }
-  const handleGitHubSignIn = async () => {
-    "use server";
-    const { signIn } = await import('@/server/auth');
-    await signIn("github" , { callbackUrl: '/dashboard' });
-  };
-
-  const handleGitLabSignIn = async () => {
-    "use server";
-    const { signIn } = await import('@/server/auth');
-    await signIn("gitlab" , { callbackUrl: '/dashboard' });
-  };
-
-  const handleGoogleSignIn = async () => {
-    "use server";
-    const { signIn } = await import('@/server/auth');
-    await signIn("google" ,{ callbackUrl: '/dashboard' });
-  };
 
   return (
     <div className='min-h-screen bg-[#f2f1ed] flex relative mx-auto'>
@@ -34,7 +34,7 @@ const SignInPage = async() => {
         <h2 className='text-2xl font-bold'>Docy</h2>
       </Link>
       
-      <div className='w-1/2  items-center justify-center hidden sm:flex '>
+      <div className='w-1/2 items-center justify-center hidden sm:flex'>
         <div className='max-w-xl'>
           <h1 className='text-4xl font-bold mb-8 leading-tight md:text-5xl mx-10 md:mx-5'>
             Write Docs<br/> Without Writing Them.
@@ -47,7 +47,7 @@ const SignInPage = async() => {
         </div>
       </div>
 
-      <div className='w-full sm:w-1/2  flex flex-col items-center justify-center bg-[#f7f8f3] min-h-screen p-8 relative shadow-2xl '>
+      <div className='w-full sm:w-1/2 flex flex-col items-center justify-center bg-[#f7f8f3] min-h-screen p-8 relative shadow-2xl'>
         <div className='w-full max-w-md'>
           <h1 className='text-5xl font-bold text-black mb-6 text-center'>
             Welcome Back
@@ -58,8 +58,7 @@ const SignInPage = async() => {
           </p>
 
           <div className='flex flex-col gap-4 mb-8'>
-
-          <form className='w-full' action={handleGoogleSignIn}>
+            <form className='w-full' action={handleGoogleSignIn}>
               <button type='submit' className='w-full flex items-center justify-center gap-3 bg-white border border-orange-400 rounded-full py-4 px-8 hover:bg-orange-50 transition-colors text-lg font-medium shadow-sm cursor-pointer'>
                 <FaGoogle size={24} />
                 Google
@@ -79,7 +78,6 @@ const SignInPage = async() => {
                 GitLab
               </button>
             </form>
-
           </div>
 
           <div className='text-center space-y-2 mb-8'>

@@ -5,6 +5,7 @@ import Overview from "@/components/sections/OverView";
 import ThreeSteps from "@/components/sections/ThreeSteps";
 import FooterSection from "@/components/Footer";
 import Hero from "@/components/sections/Hero";
+import HowItWorks from "@/components/sections/HowItWorks";
 
 
 
@@ -26,7 +27,7 @@ const Page = () => {
    <FeaturesSection />
 
         </section>
-
+        <HowItWorks />
         <section id="how-it-works">
    <ThreeSteps />
 

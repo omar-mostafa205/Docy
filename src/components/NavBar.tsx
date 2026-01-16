@@ -6,6 +6,7 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import MobileNav from "./MobileNav";
 import { useSession } from "next-auth/react";
 import {navItems} from '../lib/constants'
+
 export default function NavBar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,11 +48,11 @@ export default function NavBar() {
   };
   
   return (
-    <nav className={`fixed top-5 -mt-2 mb-20 left-0 right-0 z-50 mx-auto w-fit transition-all duration-300 ease-in-out ${
+    <nav className={`fixed top-5 -mt-2 mb-20 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
       isScrolled 
         ? 'backdrop-blur-md bg-white/80 shadow-lg border border-white/20' 
         : 'bg-gray-100'
-    } rounded-2xl`}>
+    } rounded-2xl mx-4 lg:mx-auto lg:w-fit`}>
       <div className="flex flex-row gap-10 items-center py-4 px-4">
         <Link href="/" className="flex flex-row gap-1 items-center">
           <Image src="/new.png" alt="Logo" width={32} height={32} />
@@ -87,7 +88,7 @@ export default function NavBar() {
         )}
 
         <button
-          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 ml-auto"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
