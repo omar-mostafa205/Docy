@@ -10,7 +10,7 @@ const Hero = () => {
     <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 gap-8 lg:gap-16">
       <div className="w-full lg:w-[45%] xl:w-[40%] text-center lg:text-left">
         <AnimatedContent distance={30} delay={0.1}>
-          <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[64px] xl:text-[72px] font-semibold leading-[1.1] text-gray-900 mb-4 sm:mb-6">
+          <h1 className="text-[50px] sm:text-[64px] md:text-[64px] lg:text-[64px] xl:text-[72px] font-semibold leading-[1.1] text-gray-900 mb-4 sm:mb-6">
             From Code to Documentation{" "}
             <span className="text-[#ff4d1a]">in Seconds</span>
           </h1>
