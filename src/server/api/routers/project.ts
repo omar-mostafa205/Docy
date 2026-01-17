@@ -274,5 +274,29 @@ export const projectRouter = createTRPCRouter({
             }
         )();
         return cachedDocs;
-    })
+    }),
+    getRepoWithDocs: publicProcedure
+  .input(z.object({ id: z.string() }))
+  .query(async ({ ctx, input }) => {
+    const [repo, docs] = await Promise.all([
+      ctx.db.projectData.findUnique({
+        where: { id: input.id }
+      }),
+      ctx.db.documentation.findMany({
+        where: { projectDataId: input.id },
+        orderBy: { createdAt: 'desc' }
+      })
+    ]);
+
+    if (!repo) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Repository not found'
+      });
+    }
+
+    return { repo, docs };
+  }),
+
+
 })

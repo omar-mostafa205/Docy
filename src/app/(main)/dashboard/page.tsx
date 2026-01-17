@@ -7,7 +7,7 @@ import React, { Suspense } from "react";
 export const dynamic = 'force-dynamic';
 
 const DashboardPage = () => {
-  const session =  getServerSession(authConfig);
+  const session = async () => getServerSession(authConfig);
 
   if (!session) {
     redirect("/sign-in");

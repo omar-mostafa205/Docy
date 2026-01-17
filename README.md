@@ -1,7 +1,7 @@
 # Docy
 
 <div align="center">
-  <img src="public/docyh.png" alt="Docy Logo" width="1500"  hieght="1500"/>
+  <img src="public/docyh.png" alt="Docy Logo" width="1500" height="1500"/>
   
   ### Write Docs Without Writing Them
   
@@ -12,7 +12,7 @@
   [![Next.js](https://img.shields.io/badge/Next.js-15.0+-black.svg)](https://nextjs.org/)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Demo](https://docy-liard.vercel.app/) · [Documentation](https://github.com/omar-mostafa205/Docy/blob/main/README.md) · [Report Bug]([https://docy-liard.vercel.app/s](https://docy-liard.vercel.app/)) · [Request Feature](https://github.com/omar-mostafa205/Docy/issues)
+[Demo](https://docy-liard.vercel.app/) · [Documentation](https://github.com/omar-mostafa205/Docy/blob/main/README.md) · [Report Bug](https://github.com/omar-mostafa205/Docy/issues) · [Request Feature](https://github.com/omar-mostafa205/Docy/issues)
 
 </div>
 
@@ -22,15 +22,15 @@
 
 **Docy** is an intelligent documentation platform that transforms your codebase into comprehensive, structured documentation using advanced AI and AST (Abstract Syntax Tree) analysis. Upload your repository, and within seconds, get professional-grade documentation that your team can actually use.
 
-###  Key Features
+### Key Features
 
-- **AI-Powered Generation** - Leverages GPT-4/Claude to understand your code and generate meaningful documentation
+- **AI-Powered Generation** - Leverages Gemini AI to understand your code and generate meaningful documentation
 - **AST Analysis** - Deep code structure analysis for accurate technical insights
 - **Multiple Doc Types** - Generate technical docs, API references, or both
 - **Secure Authentication** - OAuth integration with GitHub, GitLab, and Google
 - **Instant Generation** - Get documentation in seconds, not hours
 - **Project Dashboard** - Manage all your documentation projects in one place
-- **Export Options** - Download docs in multiple formats (Markdown, PDF, HTML)
+- **Export Options** - Download docs in Markdown format
 - **Beautiful UI** - Modern, responsive interface built with Tailwind CSS
 
 ---
@@ -42,7 +42,7 @@
 - Node.js 18.x or higher
 - pnpm, npm, or yarn
 - PostgreSQL database
-- OpenAI API key (or Anthropic/Google AI)
+- Google Gemini API key
 
 ### Installation
 
@@ -61,32 +61,26 @@
 
 3. **Set up environment variables**
 
-   ```bash
-   cp .env.example .env
-   ```
-
-   Edit `.env` and add your credentials:
+   Create a `.env` file in the project root:
 
    ```env
    # Database
    DATABASE_URL="postgresql://user:password@localhost:5432/docy"
 
    # NextAuth
-   NEXTAUTH_SECRET="your-secret-key"
+   AUTH_SECRET="your-secret-key-here"
    NEXTAUTH_URL="http://localhost:3000"
 
    # OAuth Providers
-   GITHUB_CLIENT_ID="your-github-client-id"
-   GITHUB_CLIENT_SECRET="your-github-client-secret"
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   GITLAB_CLIENT_ID="your-gitlab-client-id"
-   GITLAB_CLIENT_SECRET="your-gitlab-client-secret"
+   GITHUB_ID="your-github-client-id"
+   GITHUB_SECRET="your-github-client-secret"
+   GOOGLE_ID="your-google-client-id"
+   GOOGLE_SECRET="your-google-client-secret"
+   GITLAB_ID="your-gitlab-client-id"
+   GITLAB_SECRET="your-gitlab-client-secret"
 
-   # AI Service (choose one)
-   OPENAI_API_KEY="sk-..."
-   # or
-   ANTHROPIC_API_KEY="..."
+   # AI Service
+   GEMINI_API_KEY="your-gemini-api-key"
    ```
 
 4. **Set up the database**
@@ -102,13 +96,14 @@
    ```
 
 6. **Open your browser**
+
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## Architecture
 
-Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the best tools in the TypeScript ecosystem:
+Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the best tools in the TypeScript ecosystem.
 
 ### Tech Stack
 
@@ -123,35 +118,42 @@ Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the b
 | **[React Hook Form](https://react-hook-form.com/)** | Form management                 |
 | **[Zod](https://zod.dev/)**                         | Schema validation               |
 
-### System Architecture
+### System Architecture Diagram
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         Frontend                            │
-│  Next.js App Router • React • Tailwind • Framer Motion    │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-                  │ tRPC
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│                      Backend API Layer                      │
-│            tRPC Routers • Server Actions • Auth            │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-        ┌─────────┼─────────┬─────────────┐
-        │         │         │             │
-        ▼         ▼         ▼             ▼
-  ┌──────────┐ ┌──────┐ ┌──────────┐ ┌──────────┐
-  │          │ │      │ │          │ │          │
-  │ Database │ │  AI  │ │  GitHub  │ │   AST    │
-  │ Prisma   │ │ APIs │ │   API    │ │ Analysis │
-  │          │ │      │ │          │ │          │
-  └──────────┘ └──────┘ └──────────┘ └──────────┘
+```mermaid
+graph TD
+    subgraph Browser
+        A[React Components] -->|tRPC Hooks| B[tRPC Client]
+    end
+
+    subgraph Server_NextJS[Server Next.js]
+        B -->|HTTP Requests| C[tRPC API Route]
+        C -->|Procedure Calls| D[tRPC Routers]
+        D -->|Database Queries| E{Prisma ORM}
+        D -->|Auth Checks| F[NextAuth.js Middleware]
+        D -->|File AI Processing| G[Core Library]
+    end
+
+    subgraph Core_Library[Core Library src/lib]
+        G -->|calls| H[downloadRepo.ts]
+        G -->|calls| I[zipExtract.ts / ast.ts]
+        G -->|calls| J[ai.ts]
+    end
+
+    subgraph External_Services[External Services]
+        E -->|SQL| K[Database]
+        J -->|API Call| L[Google Gemini AI]
+        F -->|OAuth| M[Auth Providers]
+    end
+
+    style Browser fill:#e6f7ff,stroke:#91d5ff
+    style Server_NextJS fill:#f6ffed,stroke:#b7eb8f
+    style External_Services fill:#fffbe6,stroke:#ffe58f
 ```
 
 ---
 
-##  How It Works
+## How It Works
 
 1. **Upload Your Repository**
    - Provide your GitHub/GitLab repository URL and access token
@@ -163,14 +165,13 @@ Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the b
    - Identifies code structure, patterns, and relationships
 
 3. **AI Generation**
-   - Structured data is sent to AI (GPT-4/Claude)
+   - Structured data is sent to Google Gemini AI
    - AI generates human-readable documentation
    - Includes architecture overview, API endpoints, and code explanations
 
 4. **Review & Export**
    - View generated documentation in your dashboard
-   - Edit and refine as needed
-   - Export in multiple formats
+   - Export in Markdown format
 
 ---
 
@@ -178,7 +179,7 @@ Docy is built on the powerful [T3 Stack](https://create.t3.gg/), combining the b
 
 ### Technical Documentation
 
-Perfect for developers joining your project
+Perfect for developers joining your project:
 
 - System architecture overview
 - Folder structure explanation
@@ -188,21 +189,21 @@ Perfect for developers joining your project
 
 ### API Documentation
 
-Ideal for backend teams and API consumers
+Ideal for backend teams and API consumers:
 
 - Complete endpoint reference
 - Request/response examples
 - Authentication methods
 - Error handling guide
-- Rate limiting information
+- Validation schemas
 
 ### Full Package
 
-Get both documentation types for complete project coverage
+Get both documentation types for complete project coverage.
 
 ---
 
-## Features In Detail
+## Features
 
 ### Authentication
 
@@ -213,14 +214,14 @@ Get both documentation types for complete project coverage
 ### Project Management
 
 - **Dashboard**: View all your documentation projects
-- **Search & Filter**: Quickly find specific documentation
-- **Version Control**: Track documentation changes over time
+- **Quick Access**: See recently created documentation
+- **Project History**: Track all generated documentation
 
 ### AI-Powered Generation
 
 - **Smart Analysis**: Understands code context and relationships
-- **Multiple AI Providers**: Support for OpenAI, Anthropic, and more
-- **Customizable**: Fine-tune generation parameters
+- **Google Gemini**: Powered by advanced AI models
+- **Accurate Output**: Generates precise, structured documentation
 
 ---
 
@@ -237,11 +238,10 @@ docy/
 │   │   └── api/            # API routes
 │   ├── components/         # React components
 │   │   ├── ui/            # Reusable UI components
-│   │   ├── auth/          # Authentication components
-│   │   └── repo/          # Repository components
+│   │   └── dashboard/     # Dashboard components
 │   ├── server/            # Backend code
 │   │   ├── api/           # tRPC routers
-│   │   ├── auth.ts        # NextAuth configuration
+│   │   ├── auth/          # NextAuth configuration
 │   │   └── db.ts          # Prisma client
 │   ├── lib/               # Utility functions
 │   │   ├── ai.ts          # AI generation logic
@@ -250,8 +250,7 @@ docy/
 │   └── types/             # TypeScript types
 ├── prisma/
 │   └── schema.prisma      # Database schema
-├── public/                # Static assets
-└── package.json
+└── public/                # Static assets
 ```
 
 ### Available Scripts
@@ -275,7 +274,7 @@ pnpm format           # Format with Prettier
 
 ---
 
-##  Deployment
+## Deployment
 
 ### Vercel (Recommended)
 
@@ -288,6 +287,7 @@ pnpm format           # Format with Prettier
 2. **Set environment variables** in Vercel dashboard
 
 3. **Deploy**
+
    ```bash
    vercel --prod
    ```
@@ -309,11 +309,11 @@ Ensure all required environment variables are set in your deployment platform:
 - Database connection string
 - NextAuth secret and URL
 - OAuth provider credentials
-- AI service API keys
+- Gemini API key
 
 ---
 
-##  Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
@@ -327,7 +327,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ---
 
-##  License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -336,35 +336,35 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [T3 Stack](https://create.t3.gg/)
-- Powered by [Gemeni-Flash](https://gemini.com)
+- Powered by [Google Gemini](https://gemini.google.com)
 - UI components from [shadcn/ui](https://ui.shadcn.com)
 - Icons from [Lucide](https://lucide.dev)
 
 ---
 
-##  Support
+## Support
 
-- Email: support@docy.dev
-- Issues: [GitHub Issues](https://github.com/omar-mostafa205/Docy/issues)
-- Docs: [Documentation](https://docs.docy.dev)
+- **Email**: support@docy.dev
+- **Issues**: [GitHub Issues](https://github.com/omar-mostafa205/Docy/issues)
+- **Documentation**: [Full Docs](https://github.com/omar-mostafa205/Docy/blob/main/README.md)
 
 ---
+
 # API Reference Documentation
 
 ## Overview
 
-**Technology Stack:**
+This API supports the Docy application, an automated code documentation service. It manages user authentication via OAuth, processes git repositories, analyzes code structure using AST, and generates documentation using Google Gemini AI.
 
-- **Web Framework:** Next.js
-- **API Layer:** tRPC
-- **Database ORM:** Prisma
-- **Authentication:** NextAuth.js
-- **Validation:** Zod
-- **Language:** TypeScript
-- **AI Service:** Google Gemini
+### Technology Stack
 
-**Summary:**
-This API supports the "Docy" application, an automated code documentation service. It manages user authentication via OAuth (GitHub, Google, GitLab), handles the processing of git repositories by downloading them, parsing the code into an Abstract Syntax Tree (AST), and then uses an AI service to generate API and technical documentation. The generated documentation and project metadata are stored in a database managed by Prisma.
+- **Web Framework**: Next.js 15
+- **API Layer**: tRPC
+- **Database ORM**: Prisma
+- **Authentication**: NextAuth.js
+- **Validation**: Zod
+- **Language**: TypeScript
+- **AI Service**: Google Gemini
 
 ---
 
@@ -372,26 +372,19 @@ This API supports the "Docy" application, an automated code documentation servic
 
 ### Authentication Method
 
-**Type Detected:** OAuth with Session Management (NextAuth.js)
+**Type**: OAuth 2.0 with Session Management (NextAuth.js)
 
-**Implementation Location:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/auth/config.ts`
+**Implementation**: `src/server/auth/config.ts`
 
-**How Authentication Works:**
-The application uses NextAuth.js to handle authentication. It is configured with OAuth providers for GitHub, Google, and GitLab. User sessions and account information are persisted to the database via the `PrismaAdapter`. Once authenticated, a session is established, which is used to authorize access to protected procedures and routes.
+The application uses NextAuth.js with OAuth providers for GitHub, Google, and GitLab. User sessions and accounts are persisted to the database via `PrismaAdapter`.
 
-**Code Reference:**
-The core NextAuth.js configuration is defined in `authConfig`.
-
-_Source: `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/auth/config.ts`_
+**Configuration Example**:
 
 ```typescript
-// [Actual auth middleware or function from AST]
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { DefaultSession, NextAuthConfig } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import GitlabProvider from "next-auth/providers/gitlab";
-
 import { db } from "@/server/db";
 
 export const authConfig = {
@@ -419,38 +412,31 @@ export const authConfig = {
       },
     }),
   },
-} satisfies NextAuthConfig;
+};
 ```
 
-### Authentication Flow
+### Authentication Endpoints
 
-Authentication is initiated from the frontend, which calls the `signIn` function provided by NextAuth.js. NextAuth.js then handles the entire OAuth 2.0 flow with the selected provider. All authentication-related API calls are managed by a catch-all Next.js route handler.
+**Endpoint**: `/api/auth/[...nextauth]`
 
-**Authentication Endpoint:** `POST /api/auth/[...nextauth]`
-This is a catch-all route managed by NextAuth.js that handles various authentication actions like sign-in, sign-out, and callbacks from OAuth providers.
+**Methods**: GET, POST
 
-_Source: `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/app/api/auth/[...nextauth]/route.ts`_
+**Description**: Catch-all route that handles sign-in, sign-out, and OAuth callbacks.
+
+**Implementation**:
 
 ```typescript
-// Actual route handler code
 import { handlers } from "@/server/auth";
 export const { GET, POST } = handlers;
 ```
 
-**Token Usage:**
-The system uses session-based authentication managed by NextAuth.js. The session state is validated on the server-side within protected tRPC procedures and in Next.js middleware to control access.
-
 ### Authorization
 
-Authorization is implemented by checking for a valid user session. There is no evidence of role-based access control in the codebase.
+Authorization is implemented through session validation. Protected tRPC procedures throw `UNAUTHORIZED` errors if no valid session exists.
 
-**Protected tRPC Procedures:**
-tRPC procedures created with `protectedProcedure` will throw a `UNAUTHORIZED` error if the user session does not exist.
-
-_Source: `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/trpc.ts`_
+**Protected Procedure Example**:
 
 ```typescript
-// Actual permission checking code
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
@@ -459,20 +445,17 @@ export const protectedProcedure = t.procedure
     }
     return next({
       ctx: {
-        // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
       },
     });
   });
 ```
 
-**Protected Routes (Middleware):**
-The Next.js middleware protects routes starting with `/dashboard`, `/docs`, and `/upload-repo`. Unauthenticated users attempting to access these routes will be redirected to the sign-in page.
+**Route Protection (Middleware)**:
 
-_Source: `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/middleware.ts`_
+Protected routes: `/dashboard/**`, `/docs/**`, `/upload-repo/**`
 
 ```typescript
-// Actual permission checking code
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isProtectedRoutes = [
@@ -492,198 +475,105 @@ export default auth((req) => {
 
 ## API Endpoints
 
-All backend logic is exposed via tRPC procedures, which are handled by a single Next.js API route.
+All backend logic is exposed via tRPC procedures through a single API route.
 
-### `POST /api/trpc/[trpc]`
+### Base Endpoint
 
-This is the single entry point for all tRPC API calls. The specific procedure to be executed is determined by the `trpc` path parameter and the request payload.
+**Route**: `/api/trpc/[trpc]`
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/app/api/trpc/[trpc]/route.ts:34`
+**Methods**: GET, POST
 
-**Description:** Handles all incoming tRPC requests, routing them to the appropriate router and procedure based on the path.
-
-**Route Handler:**
-
-```typescript
-// Actual handler code from AST (or relevant snippet)
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
-    endpoint: "/api/trpc",
-    req,
-    router: appRouter,
-    createContext: () => createContext(req),
-    onError:
-      env.NODE_ENV === "development"
-        ? ({ path, error }) => {
-            console.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
-            );
-          }
-        : undefined,
-  });
-
-export { handler as GET, handler as POST };
-```
+**Description**: Single entry point for all tRPC API calls. The specific procedure is determined by the path parameter and request payload.
 
 ---
 
-### tRPC Procedures
+## tRPC Procedures
 
-The following procedures are available under the `/api/trpc` endpoint. Procedures are grouped by their respective routers.
+### Post Router
 
-### Post Procedures
-
-Router for managing `Post` entities.
-
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts`
+Manages `Post` entities (example/test endpoints).
 
 #### `post.hello` (Query)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts:10`
+**Authentication**: Not required
 
-**Description:** A public procedure for testing purposes that returns a greeting message.
+**Description**: Test procedure that returns a greeting message.
 
-**Authentication Required:** No
-
-**Route Handler:**
+**Input Schema**:
 
 ```typescript
-// Actual handler code from AST (or relevant snippet)
-hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
+z.object({
+  text: z.string(),
+});
 ```
 
-**Request Body Schema:**
+**Example Request**:
 
-```typescript
-// Actual Zod schema from code
-z.object({ text: z.string() });
-```
-
-**Response Schema:**
-
-```typescript
+```json
 {
-  greeting: string;
+  "text": "World"
+}
+```
+
+**Example Response**:
+
+```json
+{
+  "greeting": "Hello World"
 }
 ```
 
 #### `post.create` (Mutation)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts:18`
+**Authentication**: Required
 
-**Description:** Creates a new `Post` record in the database, associating it with the currently authenticated user.
+**Description**: Creates a new post associated with the authenticated user.
 
-**Authentication Required:** Yes
-
-**Route Handler:**
+**Input Schema**:
 
 ```typescript
-// Actual handler code from AST (or relevant snippet)
-create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db.post.create({
-        data: {
-          name: input.name,
-          createdBy: { connect: { id: ctx.session.user.id } },
-        },
-      });
-    }),
+z.object({
+  name: z.string().min(1),
+});
 ```
 
-**Request Body Schema:**
+**Database Operations**:
 
-```typescript
-// Actual Zod schema from code
-z.object({ name: z.string().min(1) });
-```
-
-**Database Operations:**
-
-- Writes to: `Post` table
+- Writes to `Post` table
 
 #### `post.getLatest` (Query)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts:28`
+**Authentication**: Required
 
-**Description:** Retrieves the most recent `Post` created by the authenticated user.
+**Description**: Retrieves the most recent post created by the authenticated user.
 
-**Authentication Required:** Yes
+**Database Operations**:
 
-**Route Handler:**
-
-```typescript
-// Actual handler code from AST (or relevant snippet)
-getLatest: protectedProcedure.query(async ({ ctx }) => {
-    const post = await ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-      where: { createdBy: { id: ctx.session.user.id } },
-    });
-
-    return post ?? null;
-  }),
-```
-
-**Database Operations:**
-
-- Reads from: `Post` table
+- Reads from `Post` table
 
 #### `post.getSecretMessage` (Query)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts:37`
+**Authentication**: Required
 
-**Description:** A protected procedure that returns a static secret message to authenticated users.
+**Description**: Returns a static secret message to authenticated users.
 
-**Authentication Required:** Yes
-
-**Route Handler:**
-
-```typescript
-// Actual handler code from AST (or relevant snippet)
-getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
-```
+**Response**: `"you can now see this secret message!"`
 
 ---
 
-### Project Procedures
+### Project Router
 
-Router for managing projects and documentation.
-
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts`
+Manages projects and documentation generation.
 
 #### `project.createRepo` (Mutation)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts:24`
+**Authentication**: Required
 
-**Description:** The core business logic endpoint. It takes a repository URL and token, downloads the repository, parses it to create an AST, generates documentation using an AI model, and saves the project and documentation data to the database.
+**Description**: Core endpoint that downloads a repository, analyzes it, generates documentation using AI, and saves results to the database.
 
-**Authentication Required:** Yes (checked inside the procedure)
-
-**Route Handler:**
+**Input Schema**:
 
 ```typescript
-// Actual handler code from AST (or relevant snippet)
-createRepo: publicProcedure.input(z.object({
-        repoisteryUrl: z.string(),
-        repoToken: z.string(),
-        type : z.enum(['technical', 'api', 'both'])
-    })).mutation(async ({ctx, input}) => {
-        // ... implementation
-    }),
-```
-
-**Request Body Schema:**
-
-```typescript
-// Actual Zod schema from code
 z.object({
   repoisteryUrl: z.string(),
   repoToken: z.string(),
@@ -691,133 +581,97 @@ z.object({
 });
 ```
 
-**Database Operations:**
+**Example Request**:
+
+```json
+{
+  "repoisteryUrl": "https://github.com/username/repo",
+  "repoToken": "ghp_xxxxxxxxxxxxx",
+  "type": "both"
+}
+```
+
+**Process Flow**:
+
+1. Validates user authentication
+2. Downloads repository using `downloadRepo()`
+3. Extracts and parses files using `extractFile()`
+4. Generates documentation using Google Gemini AI
+5. Saves project and documentation to database
+
+**Database Operations**:
 
 - Reads from: `ProjectData`
 - Writes to: `ProjectData`, `Documentation`
-- Uses transaction: Yes (when creating both technical and API docs)
+- Uses transactions when creating multiple documentation types
 
-**Side Effects:**
+**Possible Errors**:
 
-- Calls `downloadRepo()` to fetch a git repository from GitHub, GitLab, or Azure DevOps.
-- Calls `extractFile()` to parse the downloaded code into an AST.
-- Calls `generateTechnicalDocumentation()` and/or `generateApiDocumentation()` which make external API calls to the Google Gemini AI service.
-
-**Error Handling Code:**
-
-```typescript
-// Actual error handling from route handler
-if (!ctx.session?.user.id) {
-  throw new TRPCError({
-    code: "UNAUTHORIZED",
-    message: "You must be logged in to create a repository",
-  });
-}
-// ...
-if (!zipBuffer) {
-  throw new TRPCError({
-    code: "INTERNAL_SERVER_ERROR",
-    message: "Failed to download repository. The zip buffer is empty.",
-  });
-}
-```
+- `UNAUTHORIZED`: User not logged in
+- `INTERNAL_SERVER_ERROR`: Failed to download repository or generate documentation
 
 #### `project.getRepos` (Query)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts:164`
+**Authentication**: Not required (but requires userId)
 
-**Description:** Retrieves all repository projects associated with a given user ID. The result is cached for 600 seconds.
+**Description**: Retrieves all repository projects for a user. Results are cached for 600 seconds.
 
-**Authentication Required:** No (but requires a `userId` which is typically from an authenticated session)
-
-**Route Handler:**
+**Input Schema**:
 
 ```typescript
-// Actual handler code from AST (or relevant snippet)
-getRepos: publicProcedure.input(z.object({
-        userId: z.string()
-    })).query(async ({ctx, input}) => {
-        const cachedRepos = await unstable_cache(
-            async () => {
-                return ctx.db.projectData.findMany({
-                    where: {
-                        userId: input.userId
-                    }
-                });
-            },
-            [`repos-${input.userId}`],
-            {
-                revalidate: 600,
-                tags: [`repos-${input.userId}`]
-            }
-        )();
-        return cachedRepos;
-    }),
-```
-
-**Request Body Schema:**
-
-```typescript
-// Actual Zod schema from code
 z.object({
   userId: z.string(),
 });
 ```
 
-**Database Operations:**
+**Example Response**:
+
+```json
+[
+  {
+    "id": "clx123abc",
+    "userId": "user-abc-123",
+    "repoisteryUrl": "https://github.com/user/repo",
+    "zipFileName": null,
+    "createdAt": "2024-01-15T10:00:00.000Z"
+  }
+]
+```
+
+**Database Operations**:
 
 - Reads from: `ProjectData`
 
 #### `project.getDocs` (Query)
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts:194`
+**Authentication**: Not required
 
-**Description:** Retrieves all documentation records associated with a project ID, ordered by creation date descending. The result is cached for 600 seconds.
+**Description**: Retrieves all documentation for a specific project, ordered by creation date descending. Results are cached for 600 seconds.
 
-**Authentication Required:** No
-
-**Route Handler:**
+**Input Schema**:
 
 ```typescript
-// Actual handler code from AST (or relevant snippet)
-getDocs: publicProcedure
-  .input(
-    z.object({
-      id: z.string(),
-    }),
-  )
-  .query(async ({ ctx, input }) => {
-    const cachedDocs = await unstable_cache(
-      async () => {
-        return ctx.db.documentation.findMany({
-          where: {
-            projectDataId: input.id,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
-      },
-      [`docs-${input.id}`],
-      {
-        revalidate: 600,
-        tags: [`docs-${input.id}`],
-      },
-    )();
-    return cachedDocs;
-  });
-```
-
-**Request Body Schema:**
-
-```typescript
-// Actual Zod schema from code
 z.object({
   id: z.string(),
 });
 ```
 
-**Database Operations:**
+**Example Response**:
+
+```json
+[
+  {
+    "id": "doc-xyz-789",
+    "body": "# Documentation...",
+    "type": "TECHNICAL",
+    "projectDataId": "clx123abc",
+    "createdAt": "2024-01-15T10:01:00.000Z",
+    "updatedAt": "2024-01-15T10:01:00.000Z"
+  }
+]
+```
+
+**Database Operations**:
 
 - Reads from: `Documentation`
 
@@ -825,60 +679,123 @@ z.object({
 
 ## Data Models
 
-⚠️ No `schema.prisma` file was found in the provided codebase. The following data models are inferred from their usage with the Prisma Client in the API routes.
+The following models are inferred from Prisma Client usage in the codebase.
 
 ### Post
 
-**Inferred from:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts`
+**Table**: `post`
 
-**Database Table/Collection:** `post`
+**Fields**:
 
-| **Field Details:** | Field        | Type         | Required                                | Description        |
-| ------------------ | ------------ | ------------ | --------------------------------------- | ------------------ | ----- | ------------ | ------------ | ----------- |
-| `name`             | String       | Yes          | The name or content of the post.        |
-| `createdBy`        | User         | Yes          | A relation to the user who created it.  |
-| `createdAt`        | Date         | Yes          | Timestamp of when the post was created. | **Relationships:** | Field | Relationship | Target Model | Description |
-| -----------        | ------------ | ------------ | ----------------------------            |
-| `createdBy`        | Many-to-One  | `User`       | The user who created the post.          | ### ProjectData    |
+| Field       | Type   | Required | Description        |
+| ----------- | ------ | -------- | ------------------ |
+| `name`      | String | Yes      | Post content       |
+| `createdBy` | User   | Yes      | Creator relation   |
+| `createdAt` | Date   | Yes      | Creation timestamp |
 
-**Inferred from:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts`
+**Relationships**:
 
-**Database Table/Collection:** `projectData`
+| Field       | Relationship | Target Model | Description                   |
+| ----------- | ------------ | ------------ | ----------------------------- |
+| `createdBy` | Many-to-One  | `User`       | The user who created the post |
 
-| **Field Details:** | Field        | Type            | Required                                       | Description        |
-| ------------------ | ------------ | --------------- | ---------------------------------------------- | ------------------ | ----- | ------------ | ------------ | ----------- |
-| `id`               | String       | Yes             | Unique identifier for the project.             |
-| `repoisteryUrl`    | String       | Yes             | The URL of the git repository.                 |
-| `userId`           | String       | Yes             | The ID of the user who owns this project.      |
-| `zipFileName`      | String       | No              | The name of the uploaded zip file (if applic). | **Relationships:** | Field | Relationship | Target Model | Description |
-| --------           | ------------ | --------------- | ----------------------------------------       |
-| `user`             | Many-to-One  | `User`          | The user who owns the project.                 |
-| `docs`             | One-to-Many  | `Documentation` | The documentation generated for this proj.     | ### Documentation  |
+### ProjectData
 
-**Inferred from:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts`
+**Table**: `projectData`
 
-**Database Table/Collection:** `documentation`
+**Fields**:
 
-| **Field Details:** | Field                         | Type          | Required                                         | Description        |
-| ------------------ | ----------------------------- | ------------- | ------------------------------------------------ | ------------------ | ----- | ------------ | ------------ | ----------- |
-| `id`               | String                        | Yes           | Unique identifier for the documentation record.  |
-| `projectDataId`    | String                        | Yes           | Foreign key linking to the `ProjectData` record. |
-| `body`             | String                        | Yes           | The JSON string of the generated documentation.  |
-| `type`             | Enum (`"TECHNICAL"`, `"API"`) | Yes           | The type of documentation generated.             |
-| `createdAt`        | Date                          | Yes           | Timestamp of when the documentation was created. | **Relationships:** | Field | Relationship | Target Model | Description |
-| -------------      | ------------                  | ------------- | ------------------------------------------       |
-| `projectData`      | Many-to-One                   | `ProjectData` | The project this documentation belongs to.       | ---                |
+| Field           | Type   | Required | Description           |
+| --------------- | ------ | -------- | --------------------- |
+| `id`            | String | Yes      | Unique identifier     |
+| `repoisteryUrl` | String | Yes      | Git repository URL    |
+| `userId`        | String | Yes      | Owner user ID         |
+| `zipFileName`   | String | No       | Uploaded zip filename |
+| `createdAt`     | Date   | Yes      | Creation timestamp    |
+
+**Relationships**:
+
+| Field  | Relationship | Target Model    | Description                              |
+| ------ | ------------ | --------------- | ---------------------------------------- |
+| `user` | Many-to-One  | `User`          | The user who owns the project            |
+| `docs` | One-to-Many  | `Documentation` | Documentation generated for this project |
+
+### Documentation
+
+**Table**: `documentation`
+
+**Fields**:
+
+| Field           | Type   | Required | Description             |
+| --------------- | ------ | -------- | ----------------------- |
+| `id`            | String | Yes      | Unique identifier       |
+| `projectDataId` | String | Yes      | Project foreign key     |
+| `body`          | String | Yes      | Generated documentation |
+| `type`          | Enum   | Yes      | TECHNICAL or API        |
+| `createdAt`     | Date   | Yes      | Creation timestamp      |
+| `updatedAt`     | Date   | Yes      | Last update timestamp   |
+
+**Type Enum Values**:
+
+- `TECHNICAL` - Technical documentation
+- `API` - API reference documentation
+
+**Relationships**:
+
+| Field         | Relationship | Target Model  | Description                               |
+| ------------- | ------------ | ------------- | ----------------------------------------- |
+| `projectData` | Many-to-One  | `ProjectData` | The project this documentation belongs to |
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    USER ||--o{ PROJECT_DATA : has
+    USER ||--o{ POST : creates
+    PROJECT_DATA ||--|{ DOCUMENTATION : contains
+
+    USER {
+        string id PK
+        string name
+        string email
+        string image
+        datetime emailVerified
+    }
+
+    PROJECT_DATA {
+        string id PK
+        string userId FK
+        string repoisteryUrl
+        string zipFileName
+        datetime createdAt
+    }
+
+    DOCUMENTATION {
+        string id PK
+        string projectDataId FK
+        string body
+        string type
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    POST {
+        string id PK
+        string name
+        string createdById FK
+        datetime createdAt
+    }
+```
+
+---
 
 ## Type Definitions
 
 ### Repository
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/components/DashboardNav.tsx`
-
-**Definition:**
+**Source**: `src/components/DashboardNav.tsx`
 
 ```typescript
-// Exact type/interface definition from code
 interface Repository {
   id: string;
   name?: string;
@@ -889,18 +806,16 @@ interface Repository {
 }
 ```
 
-**Used By:**
+**Used By**:
 
-- `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/components/DashboardNav.tsx`
+- Dashboard navigation components
+- Repository listing components
 
 ### Doc
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/components/DocCard.tsx`
-
-**Definition:**
+**Source**: `src/components/DocCard.tsx`
 
 ```typescript
-// Exact type/interface definition from code
 type Doc = {
   id: string;
   title?: string;
@@ -912,35 +827,47 @@ type Doc = {
 };
 ```
 
-**Used By:**
+**Used By**:
 
-- `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/components/DocCard.tsx`
-- `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/components/RenderDocs.tsx`
+- Documentation display components
+- Documentation rendering logic
 
 ---
 
 ## Business Logic & Services
 
-### AI Service Wrappers
+### AI Service
 
-**Location:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/lib/ai.ts`
+**Location**: `src/lib/ai.ts`
 
-**Purpose:** This module contains functions that interact with the Google Gemini AI service to generate documentation from a provided AST.
+Interacts with Google Gemini AI to generate documentation.
 
-#### `generateTechnicalDocumentation()`
+#### `generateTechnicalDocumentation(ast)`
 
-**Signature:**
+**Purpose**: Generates technical documentation from AST.
+
+**Signature**:
 
 ```typescript
-// Actual function signature from code
-export async function generateTechnicalDocumentation(ast: any);
+async function generateTechnicalDocumentation(ast: any): Promise<string>;
 ```
 
-**Implementation:**
+**Parameters**:
+
+| Parameter | Type | Required | Description                          |
+| --------- | ---- | -------- | ------------------------------------ |
+| `ast`     | any  | Yes      | Abstract Syntax Tree of the codebase |
+
+**Returns**: `Promise<string>` - Generated technical documentation
+
+**Dependencies**:
+
+- Google Gemini API (`@google/genai`)
+- `documentationPrompt` from `./TechnicalPrompt`
+
+**Implementation**:
 
 ```typescript
-// Relevant portions of actual implementation
-import { documentationPrompt } from "./TechnicalPrompt";
 import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -951,11 +878,7 @@ export async function generateTechnicalDocumentation(ast: any) {
     contents: [
       {
         role: "user",
-        parts: [
-          {
-            text: documentationPrompt(ast),
-          },
-        ],
+        parts: [{ text: documentationPrompt(ast) }],
       },
     ],
   });
@@ -963,211 +886,138 @@ export async function generateTechnicalDocumentation(ast: any) {
 }
 ```
 
-| **Parameters:** | Parameter | Type | Required                             | Description                                                                         |
-| --------------- | --------- | ---- | ------------------------------------ | ----------------------------------------------------------------------------------- |
-| `ast`           | `any`     | Yes  | The AST of the codebase to document. | **Returns:** `Promise<string>` - The generated technical documentation as a string. |
+#### `generateApiDocumentation(ast)`
 
-**Dependencies:**
+**Purpose**: Generates API documentation from AST.
 
-- Google Gemini API (`@google/genai`)
-- `documentationPrompt` from `./TechnicalPrompt`
-
-#### `generateApiDocumentation()`
-
-**Signature:**
+**Signature**:
 
 ```typescript
-// Actual function signature from code
-export async function generateApiDocumentation(ast: any);
+async function generateApiDocumentation(ast: any): Promise<string>;
 ```
 
-**Implementation:**
+**Parameters**:
 
-```typescript
-// Relevant portions of actual implementation
-import { apiDocumentationPrompt } from "./ApiPrompt";
-import { GoogleGenAI } from "@google/genai";
+| Parameter | Type | Required | Description                          |
+| --------- | ---- | -------- | ------------------------------------ |
+| `ast`     | any  | Yes      | Abstract Syntax Tree of the codebase |
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+**Returns**: `Promise<string>` - Generated API documentation
 
-export async function generateApiDocumentation(ast: any) {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-pro",
-    contents: [
-      {
-        role: "user",
-        parts: [
-          {
-            text: apiDocumentationPrompt(ast),
-          },
-        ],
-      },
-    ],
-  });
-
-  return response.response.text();
-}
-```
-
-| **Parameters:** | Parameter | Type | Required                             | Description                                                                   |
-| --------------- | --------- | ---- | ------------------------------------ | ----------------------------------------------------------------------------- |
-| `ast`           | `any`     | Yes  | The AST of the codebase to document. | **Returns:** `Promise<string>` - The generated API documentation as a string. |
-
-**Dependencies:**
+**Dependencies**:
 
 - Google Gemini API (`@google/genai`)
 - `apiDocumentationPrompt` from `./ApiPrompt`
 
+---
+
 ### Repository Downloader
 
-**Location:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/lib/downloadRepo.ts`
+**Location**: `src/lib/downloadRepo.ts`
 
-**Purpose:** Provides functionality to download a git repository as a zip archive from various providers (GitHub, GitLab, Azure DevOps).
+Downloads git repositories as zip archives.
 
-#### `downloadRepo()`
+#### `downloadRepo(repoUrl, repoToken)`
 
-**Signature:**
+**Purpose**: Downloads a repository from GitHub, GitLab, or Azure DevOps.
+
+**Signature**:
 
 ```typescript
-// Actual function signature from code
-export async function downloadRepo(
+async function downloadRepo(
   repoUrl: string,
   repoToken: string,
 ): Promise<Buffer | null>;
 ```
 
-**Implementation:**
+**Parameters**:
+
+| Parameter   | Type   | Required | Description                              |
+| ----------- | ------ | -------- | ---------------------------------------- |
+| `repoUrl`   | string | Yes      | Full URL of the git repository           |
+| `repoToken` | string | Yes      | Personal access token for authentication |
+
+**Returns**: `Promise<Buffer | null>` - Buffer containing zip file, or null on failure
+
+**Dependencies**:
+
+- `axios` for HTTP requests
+
+**Example Usage**:
 
 ```typescript
-// Relevant portions of actual implementation
-export async function downloadRepo(
-  repoUrl: string,
-  repoToken: string,
-): Promise<Buffer | null> {
-  try {
-    const repoInfo = parseRepoUrl(repoUrl);
-    const downloadUrl = buildDownloadUrl(repoInfo);
-    const headers = buildHeaders(repoInfo.provider, repoToken);
+const buffer = await downloadRepo(
+  "https://github.com/user/repo",
+  "ghp_xxxxxxxxxxxxx",
+);
 
-    const res = await axios.get(downloadUrl, {
-      headers,
-      responseType: "arraybuffer",
-      maxRedirects: 5,
-    });
-
-    const buffer = Buffer.from(res.data);
-    return buffer;
-  } catch (error: any) {
-    // ... error handling
-  }
+if (buffer) {
+  // Process the downloaded repository
 }
 ```
 
-| **Parameters:** | Parameter | Type | Required                                    | Description                  |
-| --------------- | --------- | ---- | ------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------- |
-| `repoUrl`       | `string`  | Yes  | The full URL of the git repository.         |
-| `repoToken`     | `string`  | Yes  | A personal access token for the repository. | **Returns:** `Promise<Buffer | null>`- A buffer containing the downloaded zip file, or`null` on failure. |
-
-**Dependencies:**
-
-- `axios`
+---
 
 ### ZIP Extractor & AST Parser
 
-**Location:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/lib/zipExtract.ts`
+**Location**: `src/lib/zipExtract.ts`
 
-**Purpose:** Extracts files from a zip buffer, filters out ignored files, and parses the content of supported files into an AST representation.
+Extracts zip files and parses source code into AST.
 
-#### `extractFile()`
+#### `extractFile(zipFile)`
 
-**Signature:**
+**Purpose**: Extracts zip archive, filters files, and parses into AST.
+
+**Signature**:
 
 ```typescript
-// Actual function signature from code
-export async function extractFile(zipFile: Buffer): Promise<ParsedFile[]>;
+async function extractFile(zipFile: Buffer): Promise<ParsedFile[]>;
 ```
 
-**Implementation:**
+**Parameters**:
+
+| Parameter | Type   | Required | Description                   |
+| --------- | ------ | -------- | ----------------------------- |
+| `zipFile` | Buffer | Yes      | Repository zip archive buffer |
+
+**Returns**: `Promise<ParsedFile[]>` - Array of parsed file AST objects
+
+**Dependencies**:
+
+- `adm-zip` for ZIP extraction
+- Node.js `fs`, `os`, `path` modules
+- `parseFile` from `./ast` for AST parsing
+
+**Implementation Overview**:
 
 ```typescript
-// Relevant portions of actual implementation
 export async function extractFile(zipFile: Buffer): Promise<ParsedFile[]> {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "repo-"));
   const parsedFiles: ParsedFile[] = [];
+
   try {
     const zip = new AdmZip(zipFile);
     zip.extractAllTo(tempDir, true);
 
-    // ... recursive file walking and parsing
+    // Walk directory tree, filter files, parse supported files
+    // ...
   } finally {
     await fs.rm(tempDir, { recursive: true, force: true });
   }
+
   return parsedFiles;
 }
 ```
-
-| **Parameters:** | Parameter | Type | Required                                     | Description                                                                                                   |
-| --------------- | --------- | ---- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `zipFile`       | `Buffer`  | Yes  | A buffer containing the repository zip file. | **Returns:** `Promise<ParsedFile[]>` - An array of `ParsedFile` objects representing the AST of the codebase. |
-
-**Dependencies:**
-
-- `adm-zip`
-- Node.js `fs`, `os`, `path` modules
-- `parseFile` from `./ast` (AST parser not provided in detail)
-
----
-
-## Middleware
-
-### Route Protection Middleware
-
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/middleware.ts`
-
-**Purpose:** To protect specific application routes from unauthenticated access. It leverages NextAuth.js's middleware integration.
-
-**Implementation:**
-
-```typescript
-// Actual middleware function
-import { auth } from "@/server/auth";
-import { NextResponse } from "next/server";
-
-export default auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const isProtectedRoutes = [
-    req.nextUrl.pathname.startsWith("/dashboard"),
-    req.nextUrl.pathname.startsWith("/docs"),
-    req.nextUrl.pathname.startsWith("/upload-repo"),
-  ];
-  const isProtectedRoute = isProtectedRoutes.some(Boolean);
-
-  if (isProtectedRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
-  }
-});
-```
-
-**Applied To:**
-Routes matching the following patterns:
-
-- `/dashboard/**`
-- `/docs/**`
-- `/upload-repo/**`
 
 ---
 
 ## Error Handling
 
-### tRPC Error Handling
+### tRPC Error Formatting
 
-**Error Handler Middleware:**
-The tRPC server is configured with an `errorFormatter` that automatically includes flattened Zod validation errors in the response payload under the `zodError` key.
-
-_Source: `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/trpc.ts`_
+The tRPC server includes an error formatter that adds Zod validation errors to responses:
 
 ```typescript
-// Actual error handling middleware
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
@@ -1183,23 +1033,39 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 ```
 
-**Error Response Format:**
-When a Zod validation error occurs, the response will include a `zodError` object with details about the validation failure. For other errors, a standard tRPC error shape is returned.
+**Error Response Structure**:
+
+When a Zod validation error occurs:
+
+```json
+{
+  "error": {
+    "message": "Validation failed",
+    "code": "BAD_REQUEST",
+    "data": {
+      "zodError": {
+        "fieldErrors": {
+          "repoUrl": ["Invalid URL format"]
+        }
+      }
+    }
+  }
+}
+```
 
 ---
 
 ## Validation
 
-**Validation Library:** Zod
+**Library**: Zod
 
-### Validation Schemas
+All input validation uses Zod schemas for type-safe runtime validation.
 
-#### `createRepo` Input Schema
+### Key Validation Schemas
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/project.ts:24`
+#### Repository Creation Schema
 
 ```typescript
-// Actual validation schema definition
 z.object({
   repoisteryUrl: z.string(),
   repoToken: z.string(),
@@ -1207,54 +1073,112 @@ z.object({
 });
 ```
 
-**Used In:** `project.createRepo` tRPC mutation.
+**Validation Rules**:
 
-#### `createPost` Input Schema
+- `repoisteryUrl`: Must be a non-empty string
+- `repoToken`: Must be a non-empty string
+- `type`: Must be one of: 'technical', 'api', or 'both'
 
-**Source:** `omar-mostafa205-Docy-92eff79bcd7deda297ae677ef469a16d8c435fca/src/server/api/routers/post.ts:19`
+#### Post Creation Schema
 
 ```typescript
-// Actual validation schema definition
-z.object({ name: z.string().min(1) });
+z.object({
+  name: z.string().min(1),
+});
 ```
 
-**Used In:** `post.create` tRPC mutation.
+**Validation Rules**:
+
+- `name`: Must be a non-empty string (minimum 1 character)
 
 ---
 
-## Configuration & Environment
+## Configuration
 
-**Configuration Files Found:**
+### Environment Variables
 
-- `next.config.js`: Configuration for the Next.js framework.
-- `src/env.js`: Defines and validates environment variables using `@t3-oss/env-nextjs`.
-- `tsconfig.json`: TypeScript compiler configuration.
+| Variable         | Purpose                           | Example                               |
+| ---------------- | --------------------------------- | ------------------------------------- |
+| `NODE_ENV`       | Runtime environment               | `development` or `production`         |
+| `DATABASE_URL`   | Prisma database connection string | `postgresql://user:pass@host:5432/db` |
+| `AUTH_SECRET`    | NextAuth session encryption key   | Random 32+ character string           |
+| `GITHUB_ID`      | GitHub OAuth client ID            | From GitHub OAuth app settings        |
+| `GITHUB_SECRET`  | GitHub OAuth client secret        | From GitHub OAuth app settings        |
+| `GOOGLE_ID`      | Google OAuth client ID            | From Google Cloud Console             |
+| `GOOGLE_SECRET`  | Google OAuth client secret        | From Google Cloud Console             |
+| `GITLAB_ID`      | GitLab OAuth client ID            | From GitLab OAuth app settings        |
+| `GITLAB_SECRET`  | GitLab OAuth client secret        | From GitLab OAuth app settings        |
+| `GEMINI_API_KEY` | Google Gemini API key             | From Google AI Studio                 |
 
-| **Environment Variables Used:** | Variable                         | Used In                                                    | Purpose |
-| ------------------------------- | -------------------------------- | ---------------------------------------------------------- | ------- |
-| `NODE_ENV`                      | `src/env.js`, `src/server/db.ts` | Defines the runtime environment (development, production). |
-| `DATABASE_URL`                  | `src/env.js`                     | Connection string for the Prisma database.                 |
-| `AUTH_SECRET`                   | `src/env.js`                     | Secret key used by NextAuth.js for session encryption.     |
-| `GITHUB_ID`                     | `src/server/auth/config.ts`      | Client ID for the GitHub OAuth provider.                   |
-| `GITHUB_SECRET`                 | `src/server/auth/config.ts`      | Client Secret for the GitHub OAuth provider.               |
-| `GOOGLE_ID`                     | `src/server/auth/config.ts`      | Client ID for the Google OAuth provider.                   |
-| `GOOGLE_SECRET`                 | `src/server/auth/config.ts`      | Client Secret for the Google OAuth provider.               |
-| `GITLAB_ID`                     | `src/server/auth/config.ts`      | Client ID for the GitLab OAuth provider.                   |
-| `GITLAB_SECRET`                 | `src/server/auth/config.ts`      | Client Secret for the GitLab OAuth provider.               |
-| `GEMINI_API_KEY`                | `src/lib/ai.ts`                  | API key for the Google Gemini AI service.                  | ---     |
+### Configuration Files
+
+- **`next.config.js`**: Next.js framework configuration
+- **`src/env.js`**: Environment variable validation using `@t3-oss/env-nextjs`
+- **`tsconfig.json`**: TypeScript compiler configuration
+- **`prisma/schema.prisma`**: Database schema definition
+
+---
 
 ## Dependencies
 
-| **Key Dependencies:** | Package             | Version                         | Purpose |
-| --------------------- | ------------------- | ------------------------------- | ------- |
-| `next`                | Unable to determine | Web Framework                   |
-| `@prisma/client`      | Unable to determine | Database ORM                    |
-| `next-auth`           | Unable to determine | Authentication                  |
-| `@trpc/server`        | Unable to determine | API Layer                       |
-| `@trpc/react-query`   | Unable to determine | tRPC client for React           |
-| `zod`                 | Unable to determine | Validation                      |
-| `@google/genai`       | Unable to determine | AI Service SDK                  |
-| `axios`               | Unable to determine | HTTP Client                     |
-| `adm-zip`             | Unable to determine | ZIP file manipulation           |
-| `tree-sitter`         | Unable to determine | Code Parsing                    |
-| `@t3-oss/env-nextjs`  | Unable to determine | Environment variable validation | ---     |
+### Core Dependencies
+
+| Package              | Purpose                                   |
+| -------------------- | ----------------------------------------- |
+| `next`               | Web framework and React server components |
+| `@prisma/client`     | Type-safe database ORM client             |
+| `next-auth`          | Authentication library with OAuth support |
+| `@trpc/server`       | Type-safe API layer (server)              |
+| `@trpc/react-query`  | tRPC React client with React Query        |
+| `zod`                | Runtime type validation                   |
+| `@google/genai`      | Google Gemini AI SDK                      |
+| `axios`              | HTTP client for external requests         |
+| `adm-zip`            | ZIP file manipulation                     |
+| `tree-sitter`        | Code parsing and AST generation           |
+| `@t3-oss/env-nextjs` | Environment variable validation           |
+
+---
+
+## Performance & Caching
+
+### Caching Strategy
+
+- **Query Caching**: Repository and documentation queries cached for 600 seconds (10 minutes)
+- **Cache Implementation**: Uses Next.js `unstable_cache` with tagged revalidation
+- **Cache Tags**:
+  - `repos-{userId}` for user repositories
+  - `docs-{projectId}` for project documentation
+
+**Example**:
+
+```typescript
+const cachedRepos = await unstable_cache(
+  async () => {
+    return ctx.db.projectData.findMany({
+      where: { userId: input.userId },
+    });
+  },
+  [`repos-${input.userId}`],
+  {
+    revalidate: 600,
+    tags: [`repos-${input.userId}`],
+  },
+)();
+```
+
+---
+
+## Security Considerations
+
+1. **Authentication**: OAuth 2.0 via trusted providers (GitHub, Google, GitLab)
+2. **Session Management**: Secure database-backed sessions with NextAuth.js
+3. **Route Protection**: Middleware-based access control for protected routes
+4. **Token Handling**: Secure handling of personal access tokens for repository access
+5. **Input Validation**: Zod schemas validate all user inputs
+6. **Error Handling**: Sanitized error messages in production (detailed errors in development only)
+7. **CORS**: Configured appropriately for API routes
+8. **Environment Variables**: Validated and type-checked at build time
+
+---
+
+_Documentation generated by Docy • Last updated: January 2026_

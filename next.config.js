@@ -1,12 +1,24 @@
 // @ts-nocheck
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
- */
 import "./src/env.js";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 /** @type {import("next").NextConfig} */
 const config = {
+  outputFileTracingRoot: process.cwd(),
+
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "d3",
+      "mermaid",
+    ],
+  },
+
   serverExternalPackages: [
     "tree-sitter",
     "tree-sitter-javascript",
@@ -26,6 +38,7 @@ const config = {
     "tree-sitter-bash",
     "tree-sitter-yaml",
   ],
+
   images: {
     remotePatterns: [
       {
@@ -36,7 +49,7 @@ const config = {
       },
     ],
   },
-  
+
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -45,4 +58,4 @@ const config = {
   },
 };
 
-export default config;
+export default withBundleAnalyzer(config);
