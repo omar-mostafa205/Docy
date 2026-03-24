@@ -43,8 +43,8 @@ export const useRepoForm = () => {
       },
       onError: (error) => {
         setGenerating(false)
-        if (typeof error.message === 'string' && !error.message.toLocaleLowerCase().includes('invalid access token')) {
-          router.push('/dashboard')
+        if (typeof error.message === 'string' && ! error.message.toLocaleLowerCase().includes('invalid access token')) {
+          toast.error(error.message)
         }
         else {
           toast.error(error.message)

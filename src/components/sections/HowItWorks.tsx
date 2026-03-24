@@ -8,9 +8,6 @@ import { DocyExplainCard } from '../DocyExplainCard'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Placeholder components
-
-
 const HowItWorks = () => {
   const card1Ref = useRef(null)
   const card2Ref = useRef(null)

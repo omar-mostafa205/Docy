@@ -6,11 +6,28 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import MobileNav from "./MobileNav";
 import { useSession } from "next-auth/react";
 import {navItems} from '../lib/constants'
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function NavBar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
+  const isLimitReached = process.env.NEXT_PUBLIC_AI_LIMIT_REACHED === "true";
+
+  const handleActionClick = (e: React.MouseEvent) => {
+    if (isLimitReached) {
+      e.preventDefault();
+      toast.error("AI credit limit reached. Explore our community documentations!", {
+        duration: 4000,
+        position: "top-center",
+      });
+      setTimeout(() => {
+        router.push("/community");
+      }, 1500);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,11 +72,19 @@ export default function NavBar() {
     } rounded-2xl mx-4 lg:mx-auto lg:w-fit`}>
       <div className="flex flex-row gap-10 items-center py-4 px-4">
         <Link href="/" className="flex flex-row gap-1 items-center">
-          <Image src="/new.png" alt="Logo" width={32} height={32} />
+          <Image src="/new.svg" alt="Logo" width={32} height={32} priority />
           <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Docy</h1>
         </Link>
 
         <ul className="hidden lg:flex flex-row items-center gap-8">
+          <li>
+            <Link 
+              href="/community" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+            >
+              Community
+            </Link>
+          </li>
           {navItems.map((item) => (
             <li key={item.id}>
               <button 
@@ -74,13 +99,21 @@ export default function NavBar() {
 
         {!session?.user ? (
           <div className="relative rounded-full hidden lg:block">
-            <Link href="/sign-in" className="relative z-10 bg-black text-white rounded-full px-6 py-2 block">
+            <Link 
+              href="/sign-in" 
+              onClick={handleActionClick}
+              className="relative z-10 bg-black text-white rounded-full px-6 py-2 block"
+            >
               Get Started
             </Link>
           </div>
         ) : (
           <div className="relative rounded-full hidden lg:block cursor-pointer">
-            <Link href="/dashboard" className="relative z-10 bg-black cursor-pointer text-white rounded-full px-6 py-2 flex flex-row gap-2 justify-center items-center">
+            <Link 
+              href="/dashboard" 
+              onClick={handleActionClick}
+              className="relative z-10 bg-black cursor-pointer text-white rounded-full px-6 py-2 flex flex-row gap-2 justify-center items-center"
+            >
               Dashboard
               <ArrowUpRight className="w-5 h-5" />
             </Link>

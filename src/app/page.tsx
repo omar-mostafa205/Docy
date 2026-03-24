@@ -1,41 +1,36 @@
-import React from "react";
 import NavBar from "@/components/NavBar";
-import FeaturesSection from "@/components/sections/FeaturesSection";
-import Overview from "@/components/sections/OverView";
-import ThreeSteps from "@/components/sections/ThreeSteps";
-import FooterSection from "@/components/Footer";
 import Hero from "@/components/sections/Hero";
-import HowItWorks from "@/components/sections/HowItWorks";
+import dynamic from "next/dynamic";
 
-
+const FeaturesSection = dynamic(() => import("@/components/sections/FeaturesSection"));
+const Overview = dynamic(() => import("@/components/sections/OverView"));
+const ThreeSteps = dynamic(() => import("@/components/sections/ThreeSteps"));
+const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"));
+const FooterSection = dynamic(() => import("@/components/Footer"));
 
 const Page = () => {
   return (
     <div className="min-h-screen bg-white">
       <NavBar />
-      <section
-        id="home"
-        className="flex items-center justify-center w-full min-h-screen mt-14 md:mt-30 lg:mt-0"
-      >          
-      <Hero />
-        </section>
+
+      <section id="home" className="flex items-center justify-center min-h-screen">
+        <Hero />
+      </section>
+
       <section id="overview">
-          <Overview />
-          </section>
+        <Overview />
+      </section>
 
       <section id="features">
-   <FeaturesSection />
+        <FeaturesSection />
+      </section>
 
-        </section>
+      <section id="how-it-works">
         <HowItWorks />
-        <section id="how-it-works">
-   <ThreeSteps />
+        <ThreeSteps />
+      </section>
 
-        </section>
-        <section>
-          <FooterSection />
-        </section>
-     
+      <FooterSection />
     </div>
   );
 };

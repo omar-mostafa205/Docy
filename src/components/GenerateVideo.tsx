@@ -4,7 +4,7 @@ import React from 'react'
 const GenerateVideo = () => {
   return (
     <div className="relative w-full max-w-[972px] mx-auto">
-        <Image src="/image.png" alt="generate" width={822} height={822} />
+        <Image src="/image.png" alt="generate" width={822} height={822} priority />
         <div className="absolute top-[45.5%] left-[20.9%] w-[60%] h-[calc(45%-44px)] rounded-[50px] overflow-hidden translate-y-[-3px]">
   <video 
     className="object-cover w-full "

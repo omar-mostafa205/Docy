@@ -1,11 +1,30 @@
+"use client"
 import React from 'react'
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import GenerateVideo from "@/components/GenerateVideo";
 import Link from "next/link";
 import AnimatedContent from "@/components/animated-content";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Hero = () => {
+  const router = useRouter();
+  const isLimitReached = process.env.NEXT_PUBLIC_AI_LIMIT_REACHED === "true";
+
+  const handleGenerateClick = (e: React.MouseEvent) => {
+    if (isLimitReached) {
+      e.preventDefault();
+      toast.error("AI credit limit reached. Please check our community docs for now!", {
+        duration: 6000,
+        position: "top-center",
+      });
+      setTimeout(() => {
+        router.push("/community");
+      }, 1500);
+    }
+  };
+
   return (
     <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 gap-8 lg:gap-16">
       <div className="w-full lg:w-[45%] xl:w-[40%] text-center lg:text-left">
@@ -25,7 +44,10 @@ const Hero = () => {
         <AnimatedContent distance={30} delay={0.3}>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start items-center">
             <div className="relative w-full sm:w-fit rounded-full">
-              <Button className="group relative z-10 text-white bg-black cursor-pointer hover:bg-gray-900 w-full sm:w-fit py-6 sm:py-8 px-6 sm:px-10 text-base sm:text-xl rounded-md shadow-[0_12px_30px_rgba(0,0,0,0.4)] transition-colors duration-200">
+              <Button 
+                onClick={handleGenerateClick}
+                className="group relative z-10 text-white bg-black cursor-pointer hover:bg-gray-900 w-full sm:w-fit py-6 sm:py-8 px-6 sm:px-10 text-base sm:text-xl rounded-md shadow-[0_12px_30px_rgba(0,0,0,0.4)] transition-colors duration-200"
+              >
                 <Link href={"/upload-repo"}>Generate Docs</Link>
               </Button>
             </div>

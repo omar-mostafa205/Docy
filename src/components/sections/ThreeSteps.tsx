@@ -20,58 +20,37 @@ export default function ThreeSteps() {
         trigger: sectionRef.current,
         start: 'top 80%',
         toggleActions: 'play none none none',
-      }
+      },
     });
-
+  
     tl.fromTo(
       badgeRef.current,
-      { opacity: 0, y: -30, scale: 0.8 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.6 }
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.4 }
     )
-    // Heading with motion blur effect
     .fromTo(
       headingRef.current,
-      { 
-        opacity: 0, 
-        y: 80, 
-        clipPath: 'inset(100% 0 0 0)',
-        filter: 'blur(8px)'
-      },
-      { 
-        opacity: 1, 
-        y: 0, 
-        clipPath: 'inset(0% 0 0 0)',
-        filter: 'blur(0px)',
-        duration: 0.9,
-        ease: 'power2.out'
-      },
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6 },
       '-=0.2'
     )
     .fromTo(
       descriptionRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.6 },
-      '-=0.6'
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5 },
+      '-=0.3'
     )
-    // Cards staggered animation
     .fromTo(
       cardsRef.current,
-      { 
-        opacity: 0, 
-        y: 60,
-        filter: 'blur(6px)'
-      },
-      { 
-        opacity: 1, 
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
         y: 0,
-        filter: 'blur(0px)',
-        duration: 0.8,
+        duration: 0.6,
         stagger: 0.15,
-        ease: 'power2.out'
       },
       '-=0.3'
-    );
-
+    );  
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };

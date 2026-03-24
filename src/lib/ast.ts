@@ -7,22 +7,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Parser from 'tree-sitter';
-import JavaScript from 'tree-sitter-javascript';
-import TypeScript from 'tree-sitter-typescript';
-import Python from 'tree-sitter-python';
-import Java from 'tree-sitter-java';
-import Go from 'tree-sitter-go';
-import Rust from 'tree-sitter-rust';
-import PHP from 'tree-sitter-php';
-import Ruby from 'tree-sitter-ruby';
-import HTML from 'tree-sitter-html';
-import JSON from 'tree-sitter-json';
-import C from 'tree-sitter-c';
-import CPP from 'tree-sitter-cpp';
-import CSharp from 'tree-sitter-c-sharp';
-import CSS from 'tree-sitter-css';
-import Bash from 'tree-sitter-bash';
-import YAML from 'tree-sitter-yaml';
+
 import type { 
   SourceLocation,
   FunctionInfo,
@@ -39,32 +24,51 @@ import type {
   InterfaceProperty,
   TypeAliasInfo
 } from './types';
-const { typescript } = TypeScript;
-const languageMap = new Map([
-  ['.js', JavaScript],
-  ['.ts', typescript],
-  ['.tsx', typescript],
-  ['.py', Python],
-  ['.java', Java],
-  ['.go', Go],
-  ['.rs', Rust],
-  ['.php', PHP],
-  ['.rb', Ruby],
-  ['.html', HTML],
-  ['.json', JSON],
-  ['.c', C],
-  ['.cpp', CPP],
-  ['.cc', CPP],
-  ['.cxx', CPP],
-  ['.h', CPP],
-  ['.hpp', CPP],
-  ['.cs', CSharp],
-  ['.css', CSS],
-  ['.sh', Bash],
-  ['.bash', Bash],
-  ['.yml', YAML],
-  ['.yaml', YAML],
-]);
+
+const languageLoaders: Record<string, () => Promise<any>> = {
+  '.js': () => import('tree-sitter-javascript'),
+  '.ts': () => import('tree-sitter-typescript'),
+  '.tsx': () => import('tree-sitter-typescript'),
+  '.py': () => import('tree-sitter-python'),
+  '.java': () => import('tree-sitter-java'),
+  '.go': () => import('tree-sitter-go'),
+  '.rs': () => import('tree-sitter-rust'),
+  '.php': () => import('tree-sitter-php'),
+  '.rb': () => import('tree-sitter-ruby'),
+  '.html': () => import('tree-sitter-html'),
+  '.json': () => import('tree-sitter-json'),
+  '.c': () => import('tree-sitter-c'),
+  '.cpp': () => import('tree-sitter-cpp'),
+  '.cc': () => import('tree-sitter-cpp'),
+  '.cxx': () => import('tree-sitter-cpp'),
+  '.h': () => import('tree-sitter-cpp'),
+  '.hpp': () => import('tree-sitter-cpp'),
+  '.cs': () => import('tree-sitter-c-sharp'),
+  '.css': () => import('tree-sitter-css'),
+  '.sh': () => import('tree-sitter-bash'),
+  '.bash': () => import('tree-sitter-bash'),
+  '.yml': () => import('tree-sitter-yaml'),
+  '.yaml': () => import('tree-sitter-yaml'),
+};
+
+const loadedLanguages = new Map<string, any>();
+
+async function getLanguage(ext: string) {
+  if (loadedLanguages.has(ext)) return loadedLanguages.get(ext);
+  
+  const loader = languageLoaders[ext];
+  if (!loader) return null;
+
+  const module = await loader();
+  let language = module.default || module;
+  
+  if (ext === '.ts' || ext === '.tsx') {
+    language = language.typescript;
+  }
+  
+  loadedLanguages.set(ext, language);
+  return language;
+}
 
 export async function parseFile(
   content: string | Buffer,
@@ -82,7 +86,7 @@ Promise<{
 } | null>
 {
   try {
-    const language = languageMap.get(type);
+    const language = await getLanguage(type);
     if (!language) {
       return null;
     }
@@ -561,7 +565,8 @@ function extractMethodInfo(node: any, filePath: string): MethodInfo {
     isProtected,
     isAsync,
     isAbstract,
-    location
+    location,
+    comments: []
   };
 }
 
@@ -649,7 +654,7 @@ function extractClassInfo(node: any, filePath: string): ClassInfo | null {
       if (child.type === 'method_definition') {
         const methodName = child.childForFieldName('name');
         if (methodName && methodName.text === 'constructor') {
-          constructor = extractConstructorInfo(child, filePath);
+          constructor = extractConstructorInfo(child);
         } else {
           methods.push(extractMethodInfo(child, filePath));
         }
@@ -672,7 +677,8 @@ function extractClassInfo(node: any, filePath: string): ClassInfo | null {
     implements: implements_,
     isExported,
     isAbstract,
-    genericTypes
+    genericTypes,
+    comments: []
   };
 }
 
@@ -784,24 +790,14 @@ function extractVariableInfo(node: any, filePath: string): VariableInfo | null {
     isExported,
     valueType,
     defaultValue,
-    location
+    location,
+    value: defaultValue || "",
+    comments: []
   };
 }
 
-function extractConstructorInfo(node: any, filePath: string): ConstructorInfo {
+function extractConstructorInfo(node: any): ConstructorInfo {
   let parameters: Parameter[] = [];
-
-  const location: SourceLocation = {
-    start: {
-      line: node.startPosition.row + 1,
-      column: node.startPosition.column
-    },
-    end: {
-      line: node.endPosition.row + 1,
-      column: node.endPosition.column
-    },
-    filePath
-  };
 
   const parametersNode = node.childForFieldName('parameters');
   if (parametersNode) {
@@ -817,7 +813,7 @@ function extractConstructorInfo(node: any, filePath: string): ConstructorInfo {
 
   return {
     parameters,
-    location
+    comments: []
   };
 }
 
@@ -924,7 +920,8 @@ function extractInterfaceInfo(node: any, filePath: string): InterfaceInfo | null
     extends: extends_,
     isExported,
     genericTypes,
-    location
+    location,
+    comments: []
   };
 }
 
@@ -972,7 +969,8 @@ function extractPropertyInfo(node: any): PropertyInfo {
     isPrivate,
     isProtected,
     isReadonly,
-    defaultValue
+    defaultValue,
+    comments: []
   };
 }
 
@@ -1012,7 +1010,7 @@ function extractParameterInfo(param: any): Parameter | null {
           parameters.push({
             name: prop.text,
             type: 'any',
-            defaultValue: null,
+            defaultValue: defaultValue || undefined, 
             isOptional: false,
             isRest: false
           });
@@ -1024,7 +1022,7 @@ function extractParameterInfo(param: any): Parameter | null {
             parameters.push({
               name: key.text,
               type: valueType ? valueType.text.replace(/^:\s*/, '') : 'any',
-              defaultValue: null,
+              defaultValue: defaultValue || undefined, 
               isOptional: false,
               isRest: false
             });
@@ -1035,7 +1033,7 @@ function extractParameterInfo(param: any): Parameter | null {
             parameters.push({
               name: restId.text,
               type: 'any',
-              defaultValue: null,
+              defaultValue: defaultValue || undefined, 
               isOptional: false,
               isRest: true
             });
@@ -1056,7 +1054,7 @@ function extractParameterInfo(param: any): Parameter | null {
           parameters.push({
             name: elem.text,
             type: 'any',
-            defaultValue: null,
+            defaultValue: defaultValue || undefined, 
             isOptional: false,
             isRest: false
           });
@@ -1066,7 +1064,7 @@ function extractParameterInfo(param: any): Parameter | null {
             parameters.push({
               name: restId.text,
               type: 'any',
-              defaultValue: null,
+              defaultValue: defaultValue || undefined, 
               isOptional: false,
               isRest: true
             });
@@ -1145,7 +1143,7 @@ function extractParameterInfo(param: any): Parameter | null {
   const result: Parameter = { 
     name, 
     type, 
-    defaultValue, 
+    defaultValue: defaultValue || undefined, 
     isOptional, 
     isRest 
   };
@@ -1217,9 +1215,10 @@ function extractTypeAliasInfo(node: any, filePath: string): TypeAliasInfo | null
 
   return {
     name,
-    type: type || 'unknown',
+    definition: type || 'unknown',
     isExported,
     genericTypes,
-    location
+    location,
+    comments: []
   };
 }

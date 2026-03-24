@@ -5,7 +5,6 @@ import React from 'react';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
 
-// Move server actions outside component
 async function handleGitHubSignIn() {
   "use server";
   await signIn("github", { callbackUrl: '/dashboard' });

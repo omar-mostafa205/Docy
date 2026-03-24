@@ -57,7 +57,7 @@ export const projectRouter = createTRPCRouter({
 
             const totalDocs = userProjects.reduce((acc, project) => acc + project.documentaion.length, 0);
 
-            if (totalDocs >= 4) {
+            if (totalDocs >= 90) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'You have reached your free limit'
@@ -201,11 +201,20 @@ export const projectRouter = createTRPCRouter({
     getDocById: publicProcedure.input(z.object({
         id: z.string()
     })).query(async ({ ctx, input }) => {
-        const doc = await ctx.db.documentation.findUnique({
-            where: {
-                id: input.id
+        const doc = await unstable_cache(
+            async () => {
+                return ctx.db.documentation.findUnique({
+                    where: {
+                        id: input.id
+                    }
+                });
+            },
+            [`doc-${input.id}`],
+            {
+                revalidate: 3600, // Cache for 1 hour
+                tags: [`doc-${input.id}`]
             }
-        });
+        )();
 
         if (!doc) {
             throw new TRPCError({
@@ -275,28 +284,43 @@ export const projectRouter = createTRPCRouter({
         )();
         return cachedDocs;
     }),
+
     getRepoWithDocs: publicProcedure
-  .input(z.object({ id: z.string() }))
-  .query(async ({ ctx, input }) => {
-    const [repo, docs] = await Promise.all([
-      ctx.db.projectData.findUnique({
-        where: { id: input.id }
+      .input(z.object({ id: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const [repo, docs] = await Promise.all([
+          ctx.db.projectData.findUnique({
+            where: { id: input.id }
+          }),
+          ctx.db.documentation.findMany({
+            where: { projectDataId: input.id },
+            orderBy: { createdAt: 'desc' }
+          })
+        ]);
+
+        if (!repo) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Repository not found'
+          });
+        }
+
+        return { repo, docs };
       }),
-      ctx.db.documentation.findMany({
-        where: { projectDataId: input.id },
-        orderBy: { createdAt: 'desc' }
-      })
-    ]);
 
-    if (!repo) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Repository not found'
-      });
-    }
-
-    return { repo, docs };
-  }),
-
-
+    getAllDocs: publicProcedure.query(async ({ ctx }) => {
+        return ctx.db.documentation.findMany({
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                projectData: {
+                    include: {
+                        user: true,
+                    },
+                },
+            },
+            take: 50,
+        });
+    }),
 })

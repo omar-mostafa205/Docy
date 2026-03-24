@@ -207,7 +207,7 @@ export default function DocyFeaturesGrid() {
     .fromTo(
       headingRef.current,
       { opacity: 0, y: 100, clipPath: 'inset(100% 0 0 0)' },
-      { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1, ease: 'power4.out' },
+      { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1, ease: 'power2.out' },
       '-=0.3'
     )
     .fromTo(

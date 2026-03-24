@@ -2,14 +2,14 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Toaster } from "react-hot-toast";  
+import { Toaster } from "react-hot-toast";
 import { TRPCReactProvider } from "@/trpc/react";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "Docy",
   description: "Docy - Automated Code Documentation ",
-  icons: [{ rel: "icon", url: "/new.png" }],
+  icons: [{ rel: "icon", url: "/new.svg" }],
 };
 
 const geist = Geist({
@@ -23,11 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-      <SessionProvider>
-    <Toaster />
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <SessionProvider>
+          <Toaster />
+          <TRPCReactProvider>
+            {children}
+          </TRPCReactProvider>
         </SessionProvider>
-
       </body>
     </html>
   );

@@ -24,46 +24,20 @@ export default function Overview() {
 
     tl.fromTo(
       badgeRef.current,
-      { opacity: 0, y: -30, scale: 0.8 },
-      { opacity: 1, y: 0, scale: 1, duration: .01 }
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6 }
     )
-    // First heading line with motion blur effect
     .fromTo(
       headingLine1Ref.current,
-      { 
-        opacity: 0, 
-        y: 120, 
-        clipPath: 'inset(100% 0 0 0)',
-        filter: 'blur(12px)'
-      },
-      { 
-        opacity: 1, 
-        y: 0, 
-        clipPath: 'inset(0% 0 0 0)',
-        filter: 'blur(0px)',
-        duration: 1,
-        ease: 'power2.out'
-      },
-      '-=0.2'
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.3'
     )
-    // Second heading line with motion blur effect (staggered)
     .fromTo(
       headingLine2Ref.current,
-      { 
-        opacity: 0, 
-        y: 120, 
-        clipPath: 'inset(100% 0 0 0)',
-        filter: 'blur(12px)'
-      },
-      { 
-        opacity: 1, 
-        y: 0, 
-        clipPath: 'inset(0% 0 0 0)',
-        filter: 'blur(0px)',
-        duration: 1.8,
-        ease: 'power2.out'
-      },
-      '-=1.4'
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.5'
     );
 
     return () => {
@@ -81,7 +55,7 @@ export default function Overview() {
             </span>
           </div>
           
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight overflow-hidden">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight">
             <span ref={headingLine1Ref} className="text-white block mb-2">Generate full documentation </span>
             <span ref={headingLine2Ref} className="text-[#ff4d1a] block">powered by AI.</span>
           </h1>
