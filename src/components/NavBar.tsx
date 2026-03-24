@@ -72,7 +72,7 @@ export default function NavBar() {
     } rounded-2xl mx-4 lg:mx-auto lg:w-fit`}>
       <div className="flex flex-row gap-10 items-center py-4 px-4">
         <Link href="/" className="flex flex-row gap-1 items-center">
-          <Image src="/new.svg" alt="Logo" width={32} height={32} priority />
+          <Image src="/new.png" alt="Logo" width={32} height={32} priority />
           <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Docy</h1>
         </Link>
 

@@ -10,7 +10,7 @@ export default function FooterSection() {
         <footer className="py-16 md:py-32 min-h-[70vh] bg-[#261a17] relative overflow-hidden flex items-center flex-col">
             <div className="mx-auto max-w-5xl px-6 relative">
                 <Link href="/">
-                <Image src="/new.svg" alt="Logo" width={32} height={32} className="absolute top-0 left-1/2 -translate-x-1/2  -translate-y-10 " />
+                <Image src="/new.png" alt="Logo" width={32} height={32} className="absolute top-0 left-1/2 -translate-x-1/2  -translate-y-10 " />
                     </Link>
                 <div className="my-8 flex flex-wrap justify-center gap-6 text-sm">
                     {links.map((link, index) => (
