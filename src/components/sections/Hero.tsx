@@ -48,7 +48,7 @@ const Hero = () => {
                 onClick={handleGenerateClick}
                 className="group relative z-10 text-white bg-black cursor-pointer hover:bg-gray-900 w-full sm:w-fit py-6 sm:py-8 px-6 sm:px-10 text-base sm:text-xl rounded-md shadow-[0_12px_30px_rgba(0,0,0,0.4)] transition-colors duration-200"
               >
-                <Link href={"/upload-repo"}>Generate Docs</Link>
+                <Link href={"/community"}>Generate Docs</Link>
               </Button>
             </div>
 
