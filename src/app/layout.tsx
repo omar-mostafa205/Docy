@@ -9,7 +9,7 @@ import { SessionProvider } from "next-auth/react";
 export const metadata: Metadata = {
   title: "Docy",
   description: "Docy - Automated Code Documentation ",
-  icons: [{ rel: "icon", url: "/new.svg" }],
+  icons: [{ rel: "icon", url: "/docy-logo.webp" }],
 };
 
 const geist = Geist({
